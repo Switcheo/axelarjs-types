@@ -23,4 +23,5 @@ yarn dlx @yarnpkg/sdks vscode
 ```sh
 yarn codegen # Generate .ts files into ./src
 yarn build # Build .js/.d.ts files
+yarn prepare # prepare files in right location
 ```

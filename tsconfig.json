@@ -22,5 +22,9 @@
     "strict": true,
     "target": "es2018"
   },
+  "exclude": [
+    "src/google/**",       // <—— THE IMPORTANT PART
+    "**/*.test.ts"
+  ],
   "include": ["src/**/*"]
 }
