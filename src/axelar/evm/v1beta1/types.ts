@@ -201,6 +201,52 @@ export function sigTypeToJSON(object: SigType): string {
   }
 }
 
+/**
+ * DEPRECATED: Removed in v0.20, reinstated in v1.3 for backward compatibility.
+ * This enum must remain to allow decoding of historical transactions.
+ * DO NOT use in new code.
+ *
+ * @deprecated
+ */
+export enum TransferKeyType {
+  TRANSFER_KEY_TYPE_UNSPECIFIED = 0,
+  TRANSFER_KEY_TYPE_OWNERSHIP = 1,
+  TRANSFER_KEY_TYPE_OPERATORSHIP = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function transferKeyTypeFromJSON(object: any): TransferKeyType {
+  switch (object) {
+    case 0:
+    case "TRANSFER_KEY_TYPE_UNSPECIFIED":
+      return TransferKeyType.TRANSFER_KEY_TYPE_UNSPECIFIED;
+    case 1:
+    case "TRANSFER_KEY_TYPE_OWNERSHIP":
+      return TransferKeyType.TRANSFER_KEY_TYPE_OWNERSHIP;
+    case 2:
+    case "TRANSFER_KEY_TYPE_OPERATORSHIP":
+      return TransferKeyType.TRANSFER_KEY_TYPE_OPERATORSHIP;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return TransferKeyType.UNRECOGNIZED;
+  }
+}
+
+export function transferKeyTypeToJSON(object: TransferKeyType): string {
+  switch (object) {
+    case TransferKeyType.TRANSFER_KEY_TYPE_UNSPECIFIED:
+      return "TRANSFER_KEY_TYPE_UNSPECIFIED";
+    case TransferKeyType.TRANSFER_KEY_TYPE_OWNERSHIP:
+      return "TRANSFER_KEY_TYPE_OWNERSHIP";
+    case TransferKeyType.TRANSFER_KEY_TYPE_OPERATORSHIP:
+      return "TRANSFER_KEY_TYPE_OPERATORSHIP";
+    case TransferKeyType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export enum DepositStatus {
   DEPOSIT_STATUS_UNSPECIFIED = 0,
   DEPOSIT_STATUS_PENDING = 1,

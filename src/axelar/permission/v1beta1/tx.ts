@@ -2,43 +2,78 @@
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
 import { LegacyAminoPubKey } from "../../../cosmos/crypto/multisig/keys";
+import { Params } from "../../../axelar/permission/v1beta1/params";
 
 export const protobufPackage = "axelar.permission.v1beta1";
 
 export interface UpdateGovernanceKeyRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   governanceKey?: LegacyAminoPubKey;
+  sender: string;
 }
 
 export interface UpdateGovernanceKeyResponse {}
 
 /** MsgRegisterController represents a message to register a controller account */
 export interface RegisterControllerRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   controller: Uint8Array;
+  sender: string;
 }
 
 export interface RegisterControllerResponse {}
 
 /** DeregisterController represents a message to deregister a controller account */
 export interface DeregisterControllerRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   controller: Uint8Array;
+  sender: string;
 }
 
 export interface DeregisterControllerResponse {}
 
+export interface UpdateParamsRequest {
+  authority: string;
+  params?: Params;
+}
+
+export interface UpdateParamsResponse {}
+
 function createBaseUpdateGovernanceKeyRequest(): UpdateGovernanceKeyRequest {
-  return { sender: new Uint8Array(), governanceKey: undefined };
+  return { senderDeprecated: new Uint8Array(), governanceKey: undefined, sender: "" };
 }
 
 export const UpdateGovernanceKeyRequest = {
   encode(message: UpdateGovernanceKeyRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.governanceKey !== undefined) {
       LegacyAminoPubKey.encode(message.governanceKey, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -51,10 +86,13 @@ export const UpdateGovernanceKeyRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.governanceKey = LegacyAminoPubKey.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -66,21 +104,27 @@ export const UpdateGovernanceKeyRequest = {
 
   fromJSON(object: any): UpdateGovernanceKeyRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       governanceKey: isSet(object.governanceKey)
         ? LegacyAminoPubKey.fromJSON(object.governanceKey)
         : undefined,
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: UpdateGovernanceKeyRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.governanceKey !== undefined &&
       (obj.governanceKey = message.governanceKey
         ? LegacyAminoPubKey.toJSON(message.governanceKey)
         : undefined);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -88,11 +132,12 @@ export const UpdateGovernanceKeyRequest = {
     object: I,
   ): UpdateGovernanceKeyRequest {
     const message = createBaseUpdateGovernanceKeyRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.governanceKey =
       object.governanceKey !== undefined && object.governanceKey !== null
         ? LegacyAminoPubKey.fromPartial(object.governanceKey)
         : undefined;
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -139,16 +184,19 @@ export const UpdateGovernanceKeyResponse = {
 };
 
 function createBaseRegisterControllerRequest(): RegisterControllerRequest {
-  return { sender: new Uint8Array(), controller: new Uint8Array() };
+  return { senderDeprecated: new Uint8Array(), controller: new Uint8Array(), sender: "" };
 }
 
 export const RegisterControllerRequest = {
   encode(message: RegisterControllerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.controller.length !== 0) {
       writer.uint32(18).bytes(message.controller);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -161,10 +209,13 @@ export const RegisterControllerRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.controller = reader.bytes();
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -176,19 +227,25 @@ export const RegisterControllerRequest = {
 
   fromJSON(object: any): RegisterControllerRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       controller: isSet(object.controller) ? bytesFromBase64(object.controller) : new Uint8Array(),
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: RegisterControllerRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.controller !== undefined &&
       (obj.controller = base64FromBytes(
         message.controller !== undefined ? message.controller : new Uint8Array(),
       ));
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -196,8 +253,9 @@ export const RegisterControllerRequest = {
     object: I,
   ): RegisterControllerRequest {
     const message = createBaseRegisterControllerRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.controller = object.controller ?? new Uint8Array();
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -242,16 +300,19 @@ export const RegisterControllerResponse = {
 };
 
 function createBaseDeregisterControllerRequest(): DeregisterControllerRequest {
-  return { sender: new Uint8Array(), controller: new Uint8Array() };
+  return { senderDeprecated: new Uint8Array(), controller: new Uint8Array(), sender: "" };
 }
 
 export const DeregisterControllerRequest = {
   encode(message: DeregisterControllerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.controller.length !== 0) {
       writer.uint32(18).bytes(message.controller);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -264,10 +325,13 @@ export const DeregisterControllerRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.controller = reader.bytes();
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -279,19 +343,25 @@ export const DeregisterControllerRequest = {
 
   fromJSON(object: any): DeregisterControllerRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       controller: isSet(object.controller) ? bytesFromBase64(object.controller) : new Uint8Array(),
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: DeregisterControllerRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.controller !== undefined &&
       (obj.controller = base64FromBytes(
         message.controller !== undefined ? message.controller : new Uint8Array(),
       ));
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -299,8 +369,9 @@ export const DeregisterControllerRequest = {
     object: I,
   ): DeregisterControllerRequest {
     const message = createBaseDeregisterControllerRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.controller = object.controller ?? new Uint8Array();
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -342,6 +413,104 @@ export const DeregisterControllerResponse = {
     _: I,
   ): DeregisterControllerResponse {
     const message = createBaseDeregisterControllerResponse();
+    return message;
+  },
+};
+
+function createBaseUpdateParamsRequest(): UpdateParamsRequest {
+  return { authority: "", params: undefined };
+}
+
+export const UpdateParamsRequest = {
+  encode(message: UpdateParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.params !== undefined) {
+      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        case 2:
+          message.params = Params.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateParamsRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
+  },
+
+  toJSON(message: UpdateParamsRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsRequest>, I>>(object: I): UpdateParamsRequest {
+    const message = createBaseUpdateParamsRequest();
+    message.authority = object.authority ?? "";
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateParamsResponse(): UpdateParamsResponse {
+  return {};
+}
+
+export const UpdateParamsResponse = {
+  encode(_: UpdateParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): UpdateParamsResponse {
+    return {};
+  },
+
+  toJSON(_: UpdateParamsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsResponse>, I>>(_: I): UpdateParamsResponse {
+    const message = createBaseUpdateParamsResponse();
     return message;
   },
 };

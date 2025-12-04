@@ -11,6 +11,14 @@ export const protobufPackage = "axelar.vote.v1beta1";
  */
 export interface TalliedVote {
   tally: Uint8Array;
+  /**
+   * DEPRECATED: Removed in v0.20, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  votersDeprecated: Uint8Array[];
   data?: Any;
   pollId: Long;
   isVoterLate: { [key: string]: boolean };
@@ -22,13 +30,22 @@ export interface TalliedVote_IsVoterLateEntry {
 }
 
 function createBaseTalliedVote(): TalliedVote {
-  return { tally: new Uint8Array(), data: undefined, pollId: Long.UZERO, isVoterLate: {} };
+  return {
+    tally: new Uint8Array(),
+    votersDeprecated: [],
+    data: undefined,
+    pollId: Long.UZERO,
+    isVoterLate: {},
+  };
 }
 
 export const TalliedVote = {
   encode(message: TalliedVote, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.tally.length !== 0) {
       writer.uint32(10).bytes(message.tally);
+    }
+    for (const v of message.votersDeprecated) {
+      writer.uint32(18).bytes(v!);
     }
     if (message.data !== undefined) {
       Any.encode(message.data, writer.uint32(26).fork()).ldelim();
@@ -51,6 +68,9 @@ export const TalliedVote = {
       switch (tag >>> 3) {
         case 1:
           message.tally = reader.bytes();
+          break;
+        case 2:
+          message.votersDeprecated.push(reader.bytes());
           break;
         case 3:
           message.data = Any.decode(reader, reader.uint32());
@@ -75,6 +95,9 @@ export const TalliedVote = {
   fromJSON(object: any): TalliedVote {
     return {
       tally: isSet(object.tally) ? bytesFromBase64(object.tally) : new Uint8Array(),
+      votersDeprecated: Array.isArray(object?.votersDeprecated)
+        ? object.votersDeprecated.map((e: any) => bytesFromBase64(e))
+        : [],
       data: isSet(object.data) ? Any.fromJSON(object.data) : undefined,
       pollId: isSet(object.pollId) ? Long.fromValue(object.pollId) : Long.UZERO,
       isVoterLate: isObject(object.isVoterLate)
@@ -90,6 +113,13 @@ export const TalliedVote = {
     const obj: any = {};
     message.tally !== undefined &&
       (obj.tally = base64FromBytes(message.tally !== undefined ? message.tally : new Uint8Array()));
+    if (message.votersDeprecated) {
+      obj.votersDeprecated = message.votersDeprecated.map((e) =>
+        base64FromBytes(e !== undefined ? e : new Uint8Array()),
+      );
+    } else {
+      obj.votersDeprecated = [];
+    }
     message.data !== undefined && (obj.data = message.data ? Any.toJSON(message.data) : undefined);
     message.pollId !== undefined && (obj.pollId = (message.pollId || Long.UZERO).toString());
     obj.isVoterLate = {};
@@ -104,6 +134,7 @@ export const TalliedVote = {
   fromPartial<I extends Exact<DeepPartial<TalliedVote>, I>>(object: I): TalliedVote {
     const message = createBaseTalliedVote();
     message.tally = object.tally ?? new Uint8Array();
+    message.votersDeprecated = object.votersDeprecated?.map((e) => e) || [];
     message.data =
       object.data !== undefined && object.data !== null ? Any.fromPartial(object.data) : undefined;
     message.pollId =

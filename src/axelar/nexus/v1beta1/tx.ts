@@ -4,35 +4,68 @@ import * as _m0 from "protobufjs/minimal";
 import { FeeInfo } from "../../../axelar/nexus/exported/v1beta1/types";
 import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import { Duration } from "../../../google/protobuf/duration";
+import { Params } from "../../../axelar/nexus/v1beta1/params";
 
 export const protobufPackage = "axelar.nexus.v1beta1";
 
 export interface RegisterChainMaintainerRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chains: string[];
+  sender: string;
 }
 
 export interface RegisterChainMaintainerResponse {}
 
 export interface DeregisterChainMaintainerRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chains: string[];
+  sender: string;
 }
 
 export interface DeregisterChainMaintainerResponse {}
 
 /** ActivateChainRequest represents a message to activate chains */
 export interface ActivateChainRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chains: string[];
+  sender: string;
 }
 
 export interface ActivateChainResponse {}
 
 /** DeactivateChainRequest represents a message to deactivate chains */
 export interface DeactivateChainRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chains: string[];
+  sender: string;
 }
 
 export interface DeactivateChainResponse {}
@@ -42,8 +75,16 @@ export interface DeactivateChainResponse {}
  * info associated to an asset on a chain
  */
 export interface RegisterAssetFeeRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   feeInfo?: FeeInfo;
+  sender: string;
 }
 
 export interface RegisterAssetFeeResponse {}
@@ -53,25 +94,66 @@ export interface RegisterAssetFeeResponse {}
  * transfers
  */
 export interface SetTransferRateLimitRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   limit?: Coin;
   window?: Duration;
+  sender: string;
 }
 
 export interface SetTransferRateLimitResponse {}
 
+/**
+ * EnableLinkDepositRequest enables the link-deposit protocol for cross-chain
+ * transfers. The link-deposit protocol allows users to create deposit addresses
+ * and confirm deposits for cross-chain asset transfers on both EVM and Cosmos
+ * chains.
+ */
+export interface EnableLinkDepositRequest {
+  authority: string;
+}
+
+export interface EnableLinkDepositResponse {}
+
+/**
+ * DisableLinkDepositRequest disables the link-deposit protocol for cross-chain
+ * transfers. When disabled, Link, ConfirmDeposit, and CreateBurnTokens
+ * operations will be rejected.
+ */
+export interface DisableLinkDepositRequest {
+  authority: string;
+}
+
+export interface DisableLinkDepositResponse {}
+
+export interface UpdateParamsRequest {
+  authority: string;
+  params?: Params;
+}
+
+export interface UpdateParamsResponse {}
+
 function createBaseRegisterChainMaintainerRequest(): RegisterChainMaintainerRequest {
-  return { sender: new Uint8Array(), chains: [] };
+  return { senderDeprecated: new Uint8Array(), chains: [], sender: "" };
 }
 
 export const RegisterChainMaintainerRequest = {
   encode(message: RegisterChainMaintainerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     for (const v of message.chains) {
       writer.uint32(18).string(v!);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -84,10 +166,13 @@ export const RegisterChainMaintainerRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chains.push(reader.string());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -99,20 +184,26 @@ export const RegisterChainMaintainerRequest = {
 
   fromJSON(object: any): RegisterChainMaintainerRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chains: Array.isArray(object?.chains) ? object.chains.map((e: any) => String(e)) : [],
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: RegisterChainMaintainerRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     if (message.chains) {
       obj.chains = message.chains.map((e) => e);
     } else {
       obj.chains = [];
     }
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -120,8 +211,9 @@ export const RegisterChainMaintainerRequest = {
     object: I,
   ): RegisterChainMaintainerRequest {
     const message = createBaseRegisterChainMaintainerRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chains = object.chains?.map((e) => e) || [];
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -168,16 +260,19 @@ export const RegisterChainMaintainerResponse = {
 };
 
 function createBaseDeregisterChainMaintainerRequest(): DeregisterChainMaintainerRequest {
-  return { sender: new Uint8Array(), chains: [] };
+  return { senderDeprecated: new Uint8Array(), chains: [], sender: "" };
 }
 
 export const DeregisterChainMaintainerRequest = {
   encode(message: DeregisterChainMaintainerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     for (const v of message.chains) {
       writer.uint32(18).string(v!);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -190,10 +285,13 @@ export const DeregisterChainMaintainerRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chains.push(reader.string());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -205,20 +303,26 @@ export const DeregisterChainMaintainerRequest = {
 
   fromJSON(object: any): DeregisterChainMaintainerRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chains: Array.isArray(object?.chains) ? object.chains.map((e: any) => String(e)) : [],
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: DeregisterChainMaintainerRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     if (message.chains) {
       obj.chains = message.chains.map((e) => e);
     } else {
       obj.chains = [];
     }
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -226,8 +330,9 @@ export const DeregisterChainMaintainerRequest = {
     object: I,
   ): DeregisterChainMaintainerRequest {
     const message = createBaseDeregisterChainMaintainerRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chains = object.chains?.map((e) => e) || [];
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -274,16 +379,19 @@ export const DeregisterChainMaintainerResponse = {
 };
 
 function createBaseActivateChainRequest(): ActivateChainRequest {
-  return { sender: new Uint8Array(), chains: [] };
+  return { senderDeprecated: new Uint8Array(), chains: [], sender: "" };
 }
 
 export const ActivateChainRequest = {
   encode(message: ActivateChainRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     for (const v of message.chains) {
       writer.uint32(18).string(v!);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -296,10 +404,13 @@ export const ActivateChainRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chains.push(reader.string());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -311,27 +422,34 @@ export const ActivateChainRequest = {
 
   fromJSON(object: any): ActivateChainRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chains: Array.isArray(object?.chains) ? object.chains.map((e: any) => String(e)) : [],
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: ActivateChainRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     if (message.chains) {
       obj.chains = message.chains.map((e) => e);
     } else {
       obj.chains = [];
     }
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ActivateChainRequest>, I>>(object: I): ActivateChainRequest {
     const message = createBaseActivateChainRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chains = object.chains?.map((e) => e) || [];
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -376,16 +494,19 @@ export const ActivateChainResponse = {
 };
 
 function createBaseDeactivateChainRequest(): DeactivateChainRequest {
-  return { sender: new Uint8Array(), chains: [] };
+  return { senderDeprecated: new Uint8Array(), chains: [], sender: "" };
 }
 
 export const DeactivateChainRequest = {
   encode(message: DeactivateChainRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     for (const v of message.chains) {
       writer.uint32(18).string(v!);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -398,10 +519,13 @@ export const DeactivateChainRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chains.push(reader.string());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -413,27 +537,34 @@ export const DeactivateChainRequest = {
 
   fromJSON(object: any): DeactivateChainRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chains: Array.isArray(object?.chains) ? object.chains.map((e: any) => String(e)) : [],
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: DeactivateChainRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     if (message.chains) {
       obj.chains = message.chains.map((e) => e);
     } else {
       obj.chains = [];
     }
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<DeactivateChainRequest>, I>>(object: I): DeactivateChainRequest {
     const message = createBaseDeactivateChainRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chains = object.chains?.map((e) => e) || [];
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -478,16 +609,19 @@ export const DeactivateChainResponse = {
 };
 
 function createBaseRegisterAssetFeeRequest(): RegisterAssetFeeRequest {
-  return { sender: new Uint8Array(), feeInfo: undefined };
+  return { senderDeprecated: new Uint8Array(), feeInfo: undefined, sender: "" };
 }
 
 export const RegisterAssetFeeRequest = {
   encode(message: RegisterAssetFeeRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.feeInfo !== undefined) {
       FeeInfo.encode(message.feeInfo, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -500,10 +634,13 @@ export const RegisterAssetFeeRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.feeInfo = FeeInfo.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -515,27 +652,34 @@ export const RegisterAssetFeeRequest = {
 
   fromJSON(object: any): RegisterAssetFeeRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       feeInfo: isSet(object.feeInfo) ? FeeInfo.fromJSON(object.feeInfo) : undefined,
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: RegisterAssetFeeRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.feeInfo !== undefined &&
       (obj.feeInfo = message.feeInfo ? FeeInfo.toJSON(message.feeInfo) : undefined);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<RegisterAssetFeeRequest>, I>>(object: I): RegisterAssetFeeRequest {
     const message = createBaseRegisterAssetFeeRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.feeInfo =
       object.feeInfo !== undefined && object.feeInfo !== null
         ? FeeInfo.fromPartial(object.feeInfo)
         : undefined;
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -580,13 +724,13 @@ export const RegisterAssetFeeResponse = {
 };
 
 function createBaseSetTransferRateLimitRequest(): SetTransferRateLimitRequest {
-  return { sender: new Uint8Array(), chain: "", limit: undefined, window: undefined };
+  return { senderDeprecated: new Uint8Array(), chain: "", limit: undefined, window: undefined, sender: "" };
 }
 
 export const SetTransferRateLimitRequest = {
   encode(message: SetTransferRateLimitRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
@@ -596,6 +740,9 @@ export const SetTransferRateLimitRequest = {
     }
     if (message.window !== undefined) {
       Duration.encode(message.window, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.sender !== "") {
+      writer.uint32(42).string(message.sender);
     }
     return writer;
   },
@@ -608,7 +755,7 @@ export const SetTransferRateLimitRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
@@ -618,6 +765,9 @@ export const SetTransferRateLimitRequest = {
           break;
         case 4:
           message.window = Duration.decode(reader, reader.uint32());
+          break;
+        case 5:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -629,21 +779,27 @@ export const SetTransferRateLimitRequest = {
 
   fromJSON(object: any): SetTransferRateLimitRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       limit: isSet(object.limit) ? Coin.fromJSON(object.limit) : undefined,
       window: isSet(object.window) ? Duration.fromJSON(object.window) : undefined,
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: SetTransferRateLimitRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.limit !== undefined && (obj.limit = message.limit ? Coin.toJSON(message.limit) : undefined);
     message.window !== undefined &&
       (obj.window = message.window ? Duration.toJSON(message.window) : undefined);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -651,12 +807,13 @@ export const SetTransferRateLimitRequest = {
     object: I,
   ): SetTransferRateLimitRequest {
     const message = createBaseSetTransferRateLimitRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.limit =
       object.limit !== undefined && object.limit !== null ? Coin.fromPartial(object.limit) : undefined;
     message.window =
       object.window !== undefined && object.window !== null ? Duration.fromPartial(object.window) : undefined;
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -698,6 +855,284 @@ export const SetTransferRateLimitResponse = {
     _: I,
   ): SetTransferRateLimitResponse {
     const message = createBaseSetTransferRateLimitResponse();
+    return message;
+  },
+};
+
+function createBaseEnableLinkDepositRequest(): EnableLinkDepositRequest {
+  return { authority: "" };
+}
+
+export const EnableLinkDepositRequest = {
+  encode(message: EnableLinkDepositRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): EnableLinkDepositRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEnableLinkDepositRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): EnableLinkDepositRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+    };
+  },
+
+  toJSON(message: EnableLinkDepositRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<EnableLinkDepositRequest>, I>>(
+    object: I,
+  ): EnableLinkDepositRequest {
+    const message = createBaseEnableLinkDepositRequest();
+    message.authority = object.authority ?? "";
+    return message;
+  },
+};
+
+function createBaseEnableLinkDepositResponse(): EnableLinkDepositResponse {
+  return {};
+}
+
+export const EnableLinkDepositResponse = {
+  encode(_: EnableLinkDepositResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): EnableLinkDepositResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEnableLinkDepositResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): EnableLinkDepositResponse {
+    return {};
+  },
+
+  toJSON(_: EnableLinkDepositResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<EnableLinkDepositResponse>, I>>(_: I): EnableLinkDepositResponse {
+    const message = createBaseEnableLinkDepositResponse();
+    return message;
+  },
+};
+
+function createBaseDisableLinkDepositRequest(): DisableLinkDepositRequest {
+  return { authority: "" };
+}
+
+export const DisableLinkDepositRequest = {
+  encode(message: DisableLinkDepositRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DisableLinkDepositRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDisableLinkDepositRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DisableLinkDepositRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+    };
+  },
+
+  toJSON(message: DisableLinkDepositRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DisableLinkDepositRequest>, I>>(
+    object: I,
+  ): DisableLinkDepositRequest {
+    const message = createBaseDisableLinkDepositRequest();
+    message.authority = object.authority ?? "";
+    return message;
+  },
+};
+
+function createBaseDisableLinkDepositResponse(): DisableLinkDepositResponse {
+  return {};
+}
+
+export const DisableLinkDepositResponse = {
+  encode(_: DisableLinkDepositResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DisableLinkDepositResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDisableLinkDepositResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): DisableLinkDepositResponse {
+    return {};
+  },
+
+  toJSON(_: DisableLinkDepositResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DisableLinkDepositResponse>, I>>(_: I): DisableLinkDepositResponse {
+    const message = createBaseDisableLinkDepositResponse();
+    return message;
+  },
+};
+
+function createBaseUpdateParamsRequest(): UpdateParamsRequest {
+  return { authority: "", params: undefined };
+}
+
+export const UpdateParamsRequest = {
+  encode(message: UpdateParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.params !== undefined) {
+      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        case 2:
+          message.params = Params.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateParamsRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
+  },
+
+  toJSON(message: UpdateParamsRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsRequest>, I>>(object: I): UpdateParamsRequest {
+    const message = createBaseUpdateParamsRequest();
+    message.authority = object.authority ?? "";
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateParamsResponse(): UpdateParamsResponse {
+  return {};
+}
+
+export const UpdateParamsResponse = {
+  encode(_: UpdateParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): UpdateParamsResponse {
+    return {};
+  },
+
+  toJSON(_: UpdateParamsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsResponse>, I>>(_: I): UpdateParamsResponse {
+    const message = createBaseUpdateParamsResponse();
     return message;
   },
 };

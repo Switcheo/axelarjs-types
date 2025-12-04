@@ -8,12 +8,18 @@ import {
   DeactivateChainResponse,
   RegisterAssetFeeResponse,
   SetTransferRateLimitResponse,
+  EnableLinkDepositResponse,
+  DisableLinkDepositResponse,
+  UpdateParamsResponse,
   RegisterChainMaintainerRequest,
   DeregisterChainMaintainerRequest,
   ActivateChainRequest,
   DeactivateChainRequest,
   RegisterAssetFeeRequest,
   SetTransferRateLimitRequest,
+  EnableLinkDepositRequest,
+  DisableLinkDepositRequest,
+  UpdateParamsRequest,
 } from "../../../axelar/nexus/v1beta1/tx";
 import {
   LatestDepositAddressResponse,
@@ -29,6 +35,7 @@ import {
   TransferRateLimitResponse,
   MessageResponse,
   ParamsResponse,
+  LinkDepositEnabledResponse,
   LatestDepositAddressRequest,
   TransfersForChainRequest,
   FeeInfoRequest,
@@ -42,6 +49,7 @@ import {
   TransferRateLimitRequest,
   MessageRequest,
   ParamsRequest,
+  LinkDepositEnabledRequest,
 } from "../../../axelar/nexus/v1beta1/query";
 
 export const protobufPackage = "axelar.nexus.v1beta1";
@@ -56,6 +64,9 @@ export interface MsgService {
   DeactivateChain(request: DeactivateChainRequest): Promise<DeactivateChainResponse>;
   RegisterAssetFee(request: RegisterAssetFeeRequest): Promise<RegisterAssetFeeResponse>;
   SetTransferRateLimit(request: SetTransferRateLimitRequest): Promise<SetTransferRateLimitResponse>;
+  EnableLinkDeposit(request: EnableLinkDepositRequest): Promise<EnableLinkDepositResponse>;
+  DisableLinkDeposit(request: DisableLinkDepositRequest): Promise<DisableLinkDepositResponse>;
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse>;
 }
 
 export class MsgServiceClientImpl implements MsgService {
@@ -68,6 +79,9 @@ export class MsgServiceClientImpl implements MsgService {
     this.DeactivateChain = this.DeactivateChain.bind(this);
     this.RegisterAssetFee = this.RegisterAssetFee.bind(this);
     this.SetTransferRateLimit = this.SetTransferRateLimit.bind(this);
+    this.EnableLinkDeposit = this.EnableLinkDeposit.bind(this);
+    this.DisableLinkDeposit = this.DisableLinkDeposit.bind(this);
+    this.UpdateParams = this.UpdateParams.bind(this);
   }
   RegisterChainMaintainer(request: RegisterChainMaintainerRequest): Promise<RegisterChainMaintainerResponse> {
     const data = RegisterChainMaintainerRequest.encode(request).finish();
@@ -106,6 +120,24 @@ export class MsgServiceClientImpl implements MsgService {
     const promise = this.rpc.request("axelar.nexus.v1beta1.MsgService", "SetTransferRateLimit", data);
     return promise.then((data) => SetTransferRateLimitResponse.decode(new _m0.Reader(data)));
   }
+
+  EnableLinkDeposit(request: EnableLinkDepositRequest): Promise<EnableLinkDepositResponse> {
+    const data = EnableLinkDepositRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.nexus.v1beta1.MsgService", "EnableLinkDeposit", data);
+    return promise.then((data) => EnableLinkDepositResponse.decode(new _m0.Reader(data)));
+  }
+
+  DisableLinkDeposit(request: DisableLinkDepositRequest): Promise<DisableLinkDepositResponse> {
+    const data = DisableLinkDepositRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.nexus.v1beta1.MsgService", "DisableLinkDeposit", data);
+    return promise.then((data) => DisableLinkDepositResponse.decode(new _m0.Reader(data)));
+  }
+
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse> {
+    const data = UpdateParamsRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.nexus.v1beta1.MsgService", "UpdateParams", data);
+    return promise.then((data) => UpdateParamsResponse.decode(new _m0.Reader(data)));
+  }
 }
 
 /** QueryService defines the gRPC querier service. */
@@ -140,6 +172,7 @@ export interface QueryService {
   TransferRateLimit(request: TransferRateLimitRequest): Promise<TransferRateLimitResponse>;
   Message(request: MessageRequest): Promise<MessageResponse>;
   Params(request: ParamsRequest): Promise<ParamsResponse>;
+  LinkDepositEnabled(request: LinkDepositEnabledRequest): Promise<LinkDepositEnabledResponse>;
 }
 
 export class QueryServiceClientImpl implements QueryService {
@@ -159,6 +192,7 @@ export class QueryServiceClientImpl implements QueryService {
     this.TransferRateLimit = this.TransferRateLimit.bind(this);
     this.Message = this.Message.bind(this);
     this.Params = this.Params.bind(this);
+    this.LinkDepositEnabled = this.LinkDepositEnabled.bind(this);
   }
   LatestDepositAddress(request: LatestDepositAddressRequest): Promise<LatestDepositAddressResponse> {
     const data = LatestDepositAddressRequest.encode(request).finish();
@@ -236,6 +270,12 @@ export class QueryServiceClientImpl implements QueryService {
     const data = ParamsRequest.encode(request).finish();
     const promise = this.rpc.request("axelar.nexus.v1beta1.QueryService", "Params", data);
     return promise.then((data) => ParamsResponse.decode(new _m0.Reader(data)));
+  }
+
+  LinkDepositEnabled(request: LinkDepositEnabledRequest): Promise<LinkDepositEnabledResponse> {
+    const data = LinkDepositEnabledRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.nexus.v1beta1.QueryService", "LinkDepositEnabled", data);
+    return promise.then((data) => LinkDepositEnabledResponse.decode(new _m0.Reader(data)));
   }
 }
 

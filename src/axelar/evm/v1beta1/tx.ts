@@ -1,63 +1,134 @@
 /* eslint-disable */
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
-import { Asset, TokenDetails } from "../../../axelar/evm/v1beta1/types";
+import {
+  Asset,
+  TransferKeyType,
+  TokenDetails,
+  transferKeyTypeFromJSON,
+  transferKeyTypeToJSON,
+} from "../../../axelar/evm/v1beta1/types";
 import { KeyType, keyTypeFromJSON, keyTypeToJSON } from "../../../axelar/tss/exported/v1beta1/types";
+import { Params } from "../../../axelar/evm/v1beta1/params";
 
 export const protobufPackage = "axelar.evm.v1beta1";
 
 export interface SetGatewayRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   address: Uint8Array;
+  sender: string;
 }
 
 export interface SetGatewayResponse {}
 
 /** @deprecated */
 export interface ConfirmGatewayTxRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   txId: Uint8Array;
+  sender: string;
 }
 
 /** @deprecated */
 export interface ConfirmGatewayTxResponse {}
 
 export interface ConfirmGatewayTxsRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   txIds: Uint8Array[];
+  sender: string;
 }
 
 export interface ConfirmGatewayTxsResponse {}
 
 /** MsgConfirmDeposit represents an erc20 deposit confirmation message */
 export interface ConfirmDepositRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   txId: Uint8Array;
   /** @deprecated */
   amount: Uint8Array;
   burnerAddress: Uint8Array;
+  sender: string;
 }
 
 export interface ConfirmDepositResponse {}
 
 /** MsgConfirmToken represents a token deploy confirmation message */
 export interface ConfirmTokenRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   txId: Uint8Array;
   asset?: Asset;
+  sender: string;
 }
 
 export interface ConfirmTokenResponse {}
 
 export interface ConfirmTransferKeyRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   txId: Uint8Array;
+  /**
+   * DEPRECATED: Removed in v0.20, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  transferTypeDeprecated: TransferKeyType;
+  /**
+   * DEPRECATED: Removed in v0.20, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  keyIdDeprecated: string;
+  sender: string;
 }
 
 export interface ConfirmTransferKeyResponse {}
@@ -67,11 +138,19 @@ export interface ConfirmTransferKeyResponse {}
  * address
  */
 export interface LinkRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   recipientAddr: string;
   asset: string;
   recipientChain: string;
+  sender: string;
 }
 
 export interface LinkResponse {
@@ -83,8 +162,16 @@ export interface LinkResponse {
  * tokens with AxelarGateway
  */
 export interface CreateBurnTokensRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
+  sender: string;
 }
 
 export interface CreateBurnTokensResponse {}
@@ -94,12 +181,28 @@ export interface CreateBurnTokensResponse {}
  * command for AxelarGateway
  */
 export interface CreateDeployTokenRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   asset?: Asset;
   tokenDetails?: TokenDetails;
+  /**
+   * DEPRECATED: Removed in v0.15, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  minAmountDeprecated: Uint8Array;
   address: Uint8Array;
   dailyMintLimit: string;
+  sender: string;
 }
 
 export interface CreateDeployTokenResponse {}
@@ -109,33 +212,65 @@ export interface CreateDeployTokenResponse {}
  * commands handling all pending transfers
  */
 export interface CreatePendingTransfersRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
+  sender: string;
 }
 
 export interface CreatePendingTransfersResponse {}
 
 /** @deprecated */
 export interface CreateTransferOwnershipRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   keyId: string;
+  sender: string;
 }
 
 /** @deprecated */
 export interface CreateTransferOwnershipResponse {}
 
 export interface CreateTransferOperatorshipRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   keyId: string;
+  sender: string;
 }
 
 export interface CreateTransferOperatorshipResponse {}
 
 export interface SignCommandsRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
+  sender: string;
 }
 
 export interface SignCommandsResponse {
@@ -144,37 +279,71 @@ export interface SignCommandsResponse {
 }
 
 export interface AddChainRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   name: string;
+  /**
+   * DEPRECATED: Removed in v0.14, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  nativeAssetDeprecated: string;
   /** @deprecated */
   keyType: KeyType;
   params: Uint8Array;
+  sender: string;
 }
 
 export interface AddChainResponse {}
 
 export interface RetryFailedEventRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   chain: string;
   eventId: string;
+  sender: string;
 }
 
 export interface RetryFailedEventResponse {}
 
+export interface UpdateParamsRequest {
+  authority: string;
+  params?: Params;
+}
+
+export interface UpdateParamsResponse {}
+
 function createBaseSetGatewayRequest(): SetGatewayRequest {
-  return { sender: new Uint8Array(), chain: "", address: new Uint8Array() };
+  return { senderDeprecated: new Uint8Array(), chain: "", address: new Uint8Array(), sender: "" };
 }
 
 export const SetGatewayRequest = {
   encode(message: SetGatewayRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     if (message.address.length !== 0) {
       writer.uint32(26).bytes(message.address);
+    }
+    if (message.sender !== "") {
+      writer.uint32(34).string(message.sender);
     }
     return writer;
   },
@@ -187,13 +356,16 @@ export const SetGatewayRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.address = reader.bytes();
+          break;
+        case 4:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -205,27 +377,34 @@ export const SetGatewayRequest = {
 
   fromJSON(object: any): SetGatewayRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       address: isSet(object.address) ? bytesFromBase64(object.address) : new Uint8Array(),
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: SetGatewayRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.address !== undefined &&
       (obj.address = base64FromBytes(message.address !== undefined ? message.address : new Uint8Array()));
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<SetGatewayRequest>, I>>(object: I): SetGatewayRequest {
     const message = createBaseSetGatewayRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.address = object.address ?? new Uint8Array();
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -270,19 +449,22 @@ export const SetGatewayResponse = {
 };
 
 function createBaseConfirmGatewayTxRequest(): ConfirmGatewayTxRequest {
-  return { sender: new Uint8Array(), chain: "", txId: new Uint8Array() };
+  return { senderDeprecated: new Uint8Array(), chain: "", txId: new Uint8Array(), sender: "" };
 }
 
 export const ConfirmGatewayTxRequest = {
   encode(message: ConfirmGatewayTxRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     if (message.txId.length !== 0) {
       writer.uint32(26).bytes(message.txId);
+    }
+    if (message.sender !== "") {
+      writer.uint32(34).string(message.sender);
     }
     return writer;
   },
@@ -295,13 +477,16 @@ export const ConfirmGatewayTxRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.txId = reader.bytes();
+          break;
+        case 4:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -313,27 +498,34 @@ export const ConfirmGatewayTxRequest = {
 
   fromJSON(object: any): ConfirmGatewayTxRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       txId: isSet(object.txId) ? bytesFromBase64(object.txId) : new Uint8Array(),
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: ConfirmGatewayTxRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.txId !== undefined &&
       (obj.txId = base64FromBytes(message.txId !== undefined ? message.txId : new Uint8Array()));
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ConfirmGatewayTxRequest>, I>>(object: I): ConfirmGatewayTxRequest {
     const message = createBaseConfirmGatewayTxRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.txId = object.txId ?? new Uint8Array();
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -378,19 +570,22 @@ export const ConfirmGatewayTxResponse = {
 };
 
 function createBaseConfirmGatewayTxsRequest(): ConfirmGatewayTxsRequest {
-  return { sender: new Uint8Array(), chain: "", txIds: [] };
+  return { senderDeprecated: new Uint8Array(), chain: "", txIds: [], sender: "" };
 }
 
 export const ConfirmGatewayTxsRequest = {
   encode(message: ConfirmGatewayTxsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     for (const v of message.txIds) {
       writer.uint32(26).bytes(v!);
+    }
+    if (message.sender !== "") {
+      writer.uint32(34).string(message.sender);
     }
     return writer;
   },
@@ -403,13 +598,16 @@ export const ConfirmGatewayTxsRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.txIds.push(reader.bytes());
+          break;
+        case 4:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -421,22 +619,28 @@ export const ConfirmGatewayTxsRequest = {
 
   fromJSON(object: any): ConfirmGatewayTxsRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       txIds: Array.isArray(object?.txIds) ? object.txIds.map((e: any) => bytesFromBase64(e)) : [],
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: ConfirmGatewayTxsRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     if (message.txIds) {
       obj.txIds = message.txIds.map((e) => base64FromBytes(e !== undefined ? e : new Uint8Array()));
     } else {
       obj.txIds = [];
     }
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -444,9 +648,10 @@ export const ConfirmGatewayTxsRequest = {
     object: I,
   ): ConfirmGatewayTxsRequest {
     const message = createBaseConfirmGatewayTxsRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.txIds = object.txIds?.map((e) => e) || [];
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -492,18 +697,19 @@ export const ConfirmGatewayTxsResponse = {
 
 function createBaseConfirmDepositRequest(): ConfirmDepositRequest {
   return {
-    sender: new Uint8Array(),
+    senderDeprecated: new Uint8Array(),
     chain: "",
     txId: new Uint8Array(),
     amount: new Uint8Array(),
     burnerAddress: new Uint8Array(),
+    sender: "",
   };
 }
 
 export const ConfirmDepositRequest = {
   encode(message: ConfirmDepositRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
@@ -517,6 +723,9 @@ export const ConfirmDepositRequest = {
     if (message.burnerAddress.length !== 0) {
       writer.uint32(42).bytes(message.burnerAddress);
     }
+    if (message.sender !== "") {
+      writer.uint32(50).string(message.sender);
+    }
     return writer;
   },
 
@@ -528,7 +737,7 @@ export const ConfirmDepositRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
@@ -542,6 +751,9 @@ export const ConfirmDepositRequest = {
         case 5:
           message.burnerAddress = reader.bytes();
           break;
+        case 6:
+          message.sender = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -552,18 +764,23 @@ export const ConfirmDepositRequest = {
 
   fromJSON(object: any): ConfirmDepositRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       txId: isSet(object.txId) ? bytesFromBase64(object.txId) : new Uint8Array(),
       amount: isSet(object.amount) ? bytesFromBase64(object.amount) : new Uint8Array(),
       burnerAddress: isSet(object.burnerAddress) ? bytesFromBase64(object.burnerAddress) : new Uint8Array(),
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: ConfirmDepositRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.txId !== undefined &&
       (obj.txId = base64FromBytes(message.txId !== undefined ? message.txId : new Uint8Array()));
@@ -573,16 +790,18 @@ export const ConfirmDepositRequest = {
       (obj.burnerAddress = base64FromBytes(
         message.burnerAddress !== undefined ? message.burnerAddress : new Uint8Array(),
       ));
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ConfirmDepositRequest>, I>>(object: I): ConfirmDepositRequest {
     const message = createBaseConfirmDepositRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.txId = object.txId ?? new Uint8Array();
     message.amount = object.amount ?? new Uint8Array();
     message.burnerAddress = object.burnerAddress ?? new Uint8Array();
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -627,13 +846,19 @@ export const ConfirmDepositResponse = {
 };
 
 function createBaseConfirmTokenRequest(): ConfirmTokenRequest {
-  return { sender: new Uint8Array(), chain: "", txId: new Uint8Array(), asset: undefined };
+  return {
+    senderDeprecated: new Uint8Array(),
+    chain: "",
+    txId: new Uint8Array(),
+    asset: undefined,
+    sender: "",
+  };
 }
 
 export const ConfirmTokenRequest = {
   encode(message: ConfirmTokenRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
@@ -643,6 +868,9 @@ export const ConfirmTokenRequest = {
     }
     if (message.asset !== undefined) {
       Asset.encode(message.asset, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.sender !== "") {
+      writer.uint32(42).string(message.sender);
     }
     return writer;
   },
@@ -655,7 +883,7 @@ export const ConfirmTokenRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
@@ -665,6 +893,9 @@ export const ConfirmTokenRequest = {
           break;
         case 4:
           message.asset = Asset.decode(reader, reader.uint32());
+          break;
+        case 5:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -676,31 +907,38 @@ export const ConfirmTokenRequest = {
 
   fromJSON(object: any): ConfirmTokenRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       txId: isSet(object.txId) ? bytesFromBase64(object.txId) : new Uint8Array(),
       asset: isSet(object.asset) ? Asset.fromJSON(object.asset) : undefined,
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: ConfirmTokenRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.txId !== undefined &&
       (obj.txId = base64FromBytes(message.txId !== undefined ? message.txId : new Uint8Array()));
     message.asset !== undefined && (obj.asset = message.asset ? Asset.toJSON(message.asset) : undefined);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ConfirmTokenRequest>, I>>(object: I): ConfirmTokenRequest {
     const message = createBaseConfirmTokenRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.txId = object.txId ?? new Uint8Array();
     message.asset =
       object.asset !== undefined && object.asset !== null ? Asset.fromPartial(object.asset) : undefined;
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -745,19 +983,35 @@ export const ConfirmTokenResponse = {
 };
 
 function createBaseConfirmTransferKeyRequest(): ConfirmTransferKeyRequest {
-  return { sender: new Uint8Array(), chain: "", txId: new Uint8Array() };
+  return {
+    senderDeprecated: new Uint8Array(),
+    chain: "",
+    txId: new Uint8Array(),
+    transferTypeDeprecated: 0,
+    keyIdDeprecated: "",
+    sender: "",
+  };
 }
 
 export const ConfirmTransferKeyRequest = {
   encode(message: ConfirmTransferKeyRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     if (message.txId.length !== 0) {
       writer.uint32(26).bytes(message.txId);
+    }
+    if (message.transferTypeDeprecated !== 0) {
+      writer.uint32(32).int32(message.transferTypeDeprecated);
+    }
+    if (message.keyIdDeprecated !== "") {
+      writer.uint32(42).string(message.keyIdDeprecated);
+    }
+    if (message.sender !== "") {
+      writer.uint32(50).string(message.sender);
     }
     return writer;
   },
@@ -770,13 +1024,22 @@ export const ConfirmTransferKeyRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.txId = reader.bytes();
+          break;
+        case 4:
+          message.transferTypeDeprecated = reader.int32() as any;
+          break;
+        case 5:
+          message.keyIdDeprecated = reader.string();
+          break;
+        case 6:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -788,19 +1051,32 @@ export const ConfirmTransferKeyRequest = {
 
   fromJSON(object: any): ConfirmTransferKeyRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       txId: isSet(object.txId) ? bytesFromBase64(object.txId) : new Uint8Array(),
+      transferTypeDeprecated: isSet(object.transferTypeDeprecated)
+        ? transferKeyTypeFromJSON(object.transferTypeDeprecated)
+        : 0,
+      keyIdDeprecated: isSet(object.keyIdDeprecated) ? String(object.keyIdDeprecated) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: ConfirmTransferKeyRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.txId !== undefined &&
       (obj.txId = base64FromBytes(message.txId !== undefined ? message.txId : new Uint8Array()));
+    message.transferTypeDeprecated !== undefined &&
+      (obj.transferTypeDeprecated = transferKeyTypeToJSON(message.transferTypeDeprecated));
+    message.keyIdDeprecated !== undefined && (obj.keyIdDeprecated = message.keyIdDeprecated);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -808,9 +1084,12 @@ export const ConfirmTransferKeyRequest = {
     object: I,
   ): ConfirmTransferKeyRequest {
     const message = createBaseConfirmTransferKeyRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.txId = object.txId ?? new Uint8Array();
+    message.transferTypeDeprecated = object.transferTypeDeprecated ?? 0;
+    message.keyIdDeprecated = object.keyIdDeprecated ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -855,13 +1134,20 @@ export const ConfirmTransferKeyResponse = {
 };
 
 function createBaseLinkRequest(): LinkRequest {
-  return { sender: new Uint8Array(), chain: "", recipientAddr: "", asset: "", recipientChain: "" };
+  return {
+    senderDeprecated: new Uint8Array(),
+    chain: "",
+    recipientAddr: "",
+    asset: "",
+    recipientChain: "",
+    sender: "",
+  };
 }
 
 export const LinkRequest = {
   encode(message: LinkRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
@@ -875,6 +1161,9 @@ export const LinkRequest = {
     if (message.recipientChain !== "") {
       writer.uint32(42).string(message.recipientChain);
     }
+    if (message.sender !== "") {
+      writer.uint32(50).string(message.sender);
+    }
     return writer;
   },
 
@@ -886,7 +1175,7 @@ export const LinkRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
@@ -900,6 +1189,9 @@ export const LinkRequest = {
         case 5:
           message.recipientChain = reader.string();
           break;
+        case 6:
+          message.sender = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -910,32 +1202,39 @@ export const LinkRequest = {
 
   fromJSON(object: any): LinkRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       recipientAddr: isSet(object.recipientAddr) ? String(object.recipientAddr) : "",
       asset: isSet(object.asset) ? String(object.asset) : "",
       recipientChain: isSet(object.recipientChain) ? String(object.recipientChain) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: LinkRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.recipientAddr !== undefined && (obj.recipientAddr = message.recipientAddr);
     message.asset !== undefined && (obj.asset = message.asset);
     message.recipientChain !== undefined && (obj.recipientChain = message.recipientChain);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<LinkRequest>, I>>(object: I): LinkRequest {
     const message = createBaseLinkRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.recipientAddr = object.recipientAddr ?? "";
     message.asset = object.asset ?? "";
     message.recipientChain = object.recipientChain ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -990,16 +1289,19 @@ export const LinkResponse = {
 };
 
 function createBaseCreateBurnTokensRequest(): CreateBurnTokensRequest {
-  return { sender: new Uint8Array(), chain: "" };
+  return { senderDeprecated: new Uint8Array(), chain: "", sender: "" };
 }
 
 export const CreateBurnTokensRequest = {
   encode(message: CreateBurnTokensRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -1012,10 +1314,13 @@ export const CreateBurnTokensRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1027,23 +1332,30 @@ export const CreateBurnTokensRequest = {
 
   fromJSON(object: any): CreateBurnTokensRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: CreateBurnTokensRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<CreateBurnTokensRequest>, I>>(object: I): CreateBurnTokensRequest {
     const message = createBaseCreateBurnTokensRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1089,19 +1401,21 @@ export const CreateBurnTokensResponse = {
 
 function createBaseCreateDeployTokenRequest(): CreateDeployTokenRequest {
   return {
-    sender: new Uint8Array(),
+    senderDeprecated: new Uint8Array(),
     chain: "",
     asset: undefined,
     tokenDetails: undefined,
+    minAmountDeprecated: new Uint8Array(),
     address: new Uint8Array(),
     dailyMintLimit: "",
+    sender: "",
   };
 }
 
 export const CreateDeployTokenRequest = {
   encode(message: CreateDeployTokenRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
@@ -1112,11 +1426,17 @@ export const CreateDeployTokenRequest = {
     if (message.tokenDetails !== undefined) {
       TokenDetails.encode(message.tokenDetails, writer.uint32(34).fork()).ldelim();
     }
+    if (message.minAmountDeprecated.length !== 0) {
+      writer.uint32(42).bytes(message.minAmountDeprecated);
+    }
     if (message.address.length !== 0) {
       writer.uint32(50).bytes(message.address);
     }
     if (message.dailyMintLimit !== "") {
       writer.uint32(58).string(message.dailyMintLimit);
+    }
+    if (message.sender !== "") {
+      writer.uint32(66).string(message.sender);
     }
     return writer;
   },
@@ -1129,7 +1449,7 @@ export const CreateDeployTokenRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
@@ -1140,11 +1460,17 @@ export const CreateDeployTokenRequest = {
         case 4:
           message.tokenDetails = TokenDetails.decode(reader, reader.uint32());
           break;
+        case 5:
+          message.minAmountDeprecated = reader.bytes();
+          break;
         case 6:
           message.address = reader.bytes();
           break;
         case 7:
           message.dailyMintLimit = reader.string();
+          break;
+        case 8:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1156,26 +1482,39 @@ export const CreateDeployTokenRequest = {
 
   fromJSON(object: any): CreateDeployTokenRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       asset: isSet(object.asset) ? Asset.fromJSON(object.asset) : undefined,
       tokenDetails: isSet(object.tokenDetails) ? TokenDetails.fromJSON(object.tokenDetails) : undefined,
+      minAmountDeprecated: isSet(object.minAmountDeprecated)
+        ? bytesFromBase64(object.minAmountDeprecated)
+        : new Uint8Array(),
       address: isSet(object.address) ? bytesFromBase64(object.address) : new Uint8Array(),
       dailyMintLimit: isSet(object.dailyMintLimit) ? String(object.dailyMintLimit) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: CreateDeployTokenRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.asset !== undefined && (obj.asset = message.asset ? Asset.toJSON(message.asset) : undefined);
     message.tokenDetails !== undefined &&
       (obj.tokenDetails = message.tokenDetails ? TokenDetails.toJSON(message.tokenDetails) : undefined);
+    message.minAmountDeprecated !== undefined &&
+      (obj.minAmountDeprecated = base64FromBytes(
+        message.minAmountDeprecated !== undefined ? message.minAmountDeprecated : new Uint8Array(),
+      ));
     message.address !== undefined &&
       (obj.address = base64FromBytes(message.address !== undefined ? message.address : new Uint8Array()));
     message.dailyMintLimit !== undefined && (obj.dailyMintLimit = message.dailyMintLimit);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -1183,7 +1522,7 @@ export const CreateDeployTokenRequest = {
     object: I,
   ): CreateDeployTokenRequest {
     const message = createBaseCreateDeployTokenRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.asset =
       object.asset !== undefined && object.asset !== null ? Asset.fromPartial(object.asset) : undefined;
@@ -1191,8 +1530,10 @@ export const CreateDeployTokenRequest = {
       object.tokenDetails !== undefined && object.tokenDetails !== null
         ? TokenDetails.fromPartial(object.tokenDetails)
         : undefined;
+    message.minAmountDeprecated = object.minAmountDeprecated ?? new Uint8Array();
     message.address = object.address ?? new Uint8Array();
     message.dailyMintLimit = object.dailyMintLimit ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1237,16 +1578,19 @@ export const CreateDeployTokenResponse = {
 };
 
 function createBaseCreatePendingTransfersRequest(): CreatePendingTransfersRequest {
-  return { sender: new Uint8Array(), chain: "" };
+  return { senderDeprecated: new Uint8Array(), chain: "", sender: "" };
 }
 
 export const CreatePendingTransfersRequest = {
   encode(message: CreatePendingTransfersRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -1259,10 +1603,13 @@ export const CreatePendingTransfersRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1274,16 +1621,22 @@ export const CreatePendingTransfersRequest = {
 
   fromJSON(object: any): CreatePendingTransfersRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: CreatePendingTransfersRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -1291,8 +1644,9 @@ export const CreatePendingTransfersRequest = {
     object: I,
   ): CreatePendingTransfersRequest {
     const message = createBaseCreatePendingTransfersRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1339,19 +1693,22 @@ export const CreatePendingTransfersResponse = {
 };
 
 function createBaseCreateTransferOwnershipRequest(): CreateTransferOwnershipRequest {
-  return { sender: new Uint8Array(), chain: "", keyId: "" };
+  return { senderDeprecated: new Uint8Array(), chain: "", keyId: "", sender: "" };
 }
 
 export const CreateTransferOwnershipRequest = {
   encode(message: CreateTransferOwnershipRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     if (message.keyId !== "") {
       writer.uint32(26).string(message.keyId);
+    }
+    if (message.sender !== "") {
+      writer.uint32(34).string(message.sender);
     }
     return writer;
   },
@@ -1364,13 +1721,16 @@ export const CreateTransferOwnershipRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.keyId = reader.string();
+          break;
+        case 4:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1382,18 +1742,24 @@ export const CreateTransferOwnershipRequest = {
 
   fromJSON(object: any): CreateTransferOwnershipRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       keyId: isSet(object.keyId) ? String(object.keyId) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: CreateTransferOwnershipRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.keyId !== undefined && (obj.keyId = message.keyId);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -1401,9 +1767,10 @@ export const CreateTransferOwnershipRequest = {
     object: I,
   ): CreateTransferOwnershipRequest {
     const message = createBaseCreateTransferOwnershipRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.keyId = object.keyId ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1450,19 +1817,22 @@ export const CreateTransferOwnershipResponse = {
 };
 
 function createBaseCreateTransferOperatorshipRequest(): CreateTransferOperatorshipRequest {
-  return { sender: new Uint8Array(), chain: "", keyId: "" };
+  return { senderDeprecated: new Uint8Array(), chain: "", keyId: "", sender: "" };
 }
 
 export const CreateTransferOperatorshipRequest = {
   encode(message: CreateTransferOperatorshipRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     if (message.keyId !== "") {
       writer.uint32(26).string(message.keyId);
+    }
+    if (message.sender !== "") {
+      writer.uint32(34).string(message.sender);
     }
     return writer;
   },
@@ -1475,13 +1845,16 @@ export const CreateTransferOperatorshipRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.keyId = reader.string();
+          break;
+        case 4:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1493,18 +1866,24 @@ export const CreateTransferOperatorshipRequest = {
 
   fromJSON(object: any): CreateTransferOperatorshipRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       keyId: isSet(object.keyId) ? String(object.keyId) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: CreateTransferOperatorshipRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.keyId !== undefined && (obj.keyId = message.keyId);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
@@ -1512,9 +1891,10 @@ export const CreateTransferOperatorshipRequest = {
     object: I,
   ): CreateTransferOperatorshipRequest {
     const message = createBaseCreateTransferOperatorshipRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.keyId = object.keyId ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1561,16 +1941,19 @@ export const CreateTransferOperatorshipResponse = {
 };
 
 function createBaseSignCommandsRequest(): SignCommandsRequest {
-  return { sender: new Uint8Array(), chain: "" };
+  return { senderDeprecated: new Uint8Array(), chain: "", sender: "" };
 }
 
 export const SignCommandsRequest = {
   encode(message: SignCommandsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -1583,10 +1966,13 @@ export const SignCommandsRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1598,23 +1984,30 @@ export const SignCommandsRequest = {
 
   fromJSON(object: any): SignCommandsRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: SignCommandsRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<SignCommandsRequest>, I>>(object: I): SignCommandsRequest {
     const message = createBaseSignCommandsRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1683,22 +2076,35 @@ export const SignCommandsResponse = {
 };
 
 function createBaseAddChainRequest(): AddChainRequest {
-  return { sender: new Uint8Array(), name: "", keyType: 0, params: new Uint8Array() };
+  return {
+    senderDeprecated: new Uint8Array(),
+    name: "",
+    nativeAssetDeprecated: "",
+    keyType: 0,
+    params: new Uint8Array(),
+    sender: "",
+  };
 }
 
 export const AddChainRequest = {
   encode(message: AddChainRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
+    }
+    if (message.nativeAssetDeprecated !== "") {
+      writer.uint32(26).string(message.nativeAssetDeprecated);
     }
     if (message.keyType !== 0) {
       writer.uint32(32).int32(message.keyType);
     }
     if (message.params.length !== 0) {
       writer.uint32(42).bytes(message.params);
+    }
+    if (message.sender !== "") {
+      writer.uint32(50).string(message.sender);
     }
     return writer;
   },
@@ -1711,16 +2117,22 @@ export const AddChainRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.name = reader.string();
+          break;
+        case 3:
+          message.nativeAssetDeprecated = reader.string();
           break;
         case 4:
           message.keyType = reader.int32() as any;
           break;
         case 5:
           message.params = reader.bytes();
+          break;
+        case 6:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1732,30 +2144,41 @@ export const AddChainRequest = {
 
   fromJSON(object: any): AddChainRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       name: isSet(object.name) ? String(object.name) : "",
+      nativeAssetDeprecated: isSet(object.nativeAssetDeprecated) ? String(object.nativeAssetDeprecated) : "",
       keyType: isSet(object.keyType) ? keyTypeFromJSON(object.keyType) : 0,
       params: isSet(object.params) ? bytesFromBase64(object.params) : new Uint8Array(),
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: AddChainRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.name !== undefined && (obj.name = message.name);
+    message.nativeAssetDeprecated !== undefined &&
+      (obj.nativeAssetDeprecated = message.nativeAssetDeprecated);
     message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
     message.params !== undefined &&
       (obj.params = base64FromBytes(message.params !== undefined ? message.params : new Uint8Array()));
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<AddChainRequest>, I>>(object: I): AddChainRequest {
     const message = createBaseAddChainRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.name = object.name ?? "";
+    message.nativeAssetDeprecated = object.nativeAssetDeprecated ?? "";
     message.keyType = object.keyType ?? 0;
     message.params = object.params ?? new Uint8Array();
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1800,19 +2223,22 @@ export const AddChainResponse = {
 };
 
 function createBaseRetryFailedEventRequest(): RetryFailedEventRequest {
-  return { sender: new Uint8Array(), chain: "", eventId: "" };
+  return { senderDeprecated: new Uint8Array(), chain: "", eventId: "", sender: "" };
 }
 
 export const RetryFailedEventRequest = {
   encode(message: RetryFailedEventRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.chain !== "") {
       writer.uint32(18).string(message.chain);
     }
     if (message.eventId !== "") {
       writer.uint32(26).string(message.eventId);
+    }
+    if (message.sender !== "") {
+      writer.uint32(34).string(message.sender);
     }
     return writer;
   },
@@ -1825,13 +2251,16 @@ export const RetryFailedEventRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.chain = reader.string();
           break;
         case 3:
           message.eventId = reader.string();
+          break;
+        case 4:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1843,26 +2272,33 @@ export const RetryFailedEventRequest = {
 
   fromJSON(object: any): RetryFailedEventRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       chain: isSet(object.chain) ? String(object.chain) : "",
       eventId: isSet(object.eventId) ? String(object.eventId) : "",
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: RetryFailedEventRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.chain !== undefined && (obj.chain = message.chain);
     message.eventId !== undefined && (obj.eventId = message.eventId);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<RetryFailedEventRequest>, I>>(object: I): RetryFailedEventRequest {
     const message = createBaseRetryFailedEventRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.chain = object.chain ?? "";
     message.eventId = object.eventId ?? "";
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -1902,6 +2338,104 @@ export const RetryFailedEventResponse = {
 
   fromPartial<I extends Exact<DeepPartial<RetryFailedEventResponse>, I>>(_: I): RetryFailedEventResponse {
     const message = createBaseRetryFailedEventResponse();
+    return message;
+  },
+};
+
+function createBaseUpdateParamsRequest(): UpdateParamsRequest {
+  return { authority: "", params: undefined };
+}
+
+export const UpdateParamsRequest = {
+  encode(message: UpdateParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.params !== undefined) {
+      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        case 2:
+          message.params = Params.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateParamsRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
+  },
+
+  toJSON(message: UpdateParamsRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsRequest>, I>>(object: I): UpdateParamsRequest {
+    const message = createBaseUpdateParamsRequest();
+    message.authority = object.authority ?? "";
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateParamsResponse(): UpdateParamsResponse {
+  return {};
+}
+
+export const UpdateParamsResponse = {
+  encode(_: UpdateParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): UpdateParamsResponse {
+    return {};
+  },
+
+  toJSON(_: UpdateParamsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsResponse>, I>>(_: I): UpdateParamsResponse {
+    const message = createBaseUpdateParamsResponse();
     return message;
   },
 };

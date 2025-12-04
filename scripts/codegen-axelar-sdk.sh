@@ -6,7 +6,7 @@ TS_PROTO_OPTS="esModuleInterop=true,forceLong=long,useOptionals=messages,useDate
 
 OUT_DIR="./src"
 AXELAR_SDK_DIR="./axelar-core/proto"
-AXELAR_SDK_THIRD_PARTY_DIR="./axelar-core/third_party/proto"
+AXELAR_SDK_THIRD_PARTY_DIR="./axelar-core/swagger-proto/third_party"
 
 PLUGIN_PATH="$(realpath ./bin)/protoc-gen-ts_proto_yarn_2"
 

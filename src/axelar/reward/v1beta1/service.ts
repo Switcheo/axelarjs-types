@@ -1,7 +1,12 @@
 /* eslint-disable */
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
-import { RefundMsgResponse, RefundMsgRequest } from "../../../axelar/reward/v1beta1/tx";
+import {
+  RefundMsgResponse,
+  UpdateParamsResponse,
+  RefundMsgRequest,
+  UpdateParamsRequest,
+} from "../../../axelar/reward/v1beta1/tx";
 import {
   InflationRateResponse,
   ParamsResponse,
@@ -14,6 +19,7 @@ export const protobufPackage = "axelar.reward.v1beta1";
 /** Msg defines the axelarnet Msg service. */
 export interface MsgService {
   RefundMsg(request: RefundMsgRequest): Promise<RefundMsgResponse>;
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse>;
 }
 
 export class MsgServiceClientImpl implements MsgService {
@@ -21,11 +27,18 @@ export class MsgServiceClientImpl implements MsgService {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.RefundMsg = this.RefundMsg.bind(this);
+    this.UpdateParams = this.UpdateParams.bind(this);
   }
   RefundMsg(request: RefundMsgRequest): Promise<RefundMsgResponse> {
     const data = RefundMsgRequest.encode(request).finish();
     const promise = this.rpc.request("axelar.reward.v1beta1.MsgService", "RefundMsg", data);
     return promise.then((data) => RefundMsgResponse.decode(new _m0.Reader(data)));
+  }
+
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse> {
+    const data = UpdateParamsRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.reward.v1beta1.MsgService", "UpdateParams", data);
+    return promise.then((data) => UpdateParamsResponse.decode(new _m0.Reader(data)));
   }
 }
 

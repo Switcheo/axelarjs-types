@@ -1,7 +1,12 @@
 /* eslint-disable */
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
-import { VoteResponse, VoteRequest } from "../../../axelar/vote/v1beta1/tx";
+import {
+  VoteResponse,
+  UpdateParamsResponse,
+  VoteRequest,
+  UpdateParamsRequest,
+} from "../../../axelar/vote/v1beta1/tx";
 import { ParamsResponse, ParamsRequest } from "../../../axelar/vote/v1beta1/query";
 
 export const protobufPackage = "axelar.vote.v1beta1";
@@ -9,6 +14,7 @@ export const protobufPackage = "axelar.vote.v1beta1";
 /** Msg defines the vote Msg service. */
 export interface MsgService {
   Vote(request: VoteRequest): Promise<VoteResponse>;
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse>;
 }
 
 export class MsgServiceClientImpl implements MsgService {
@@ -16,11 +22,18 @@ export class MsgServiceClientImpl implements MsgService {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.Vote = this.Vote.bind(this);
+    this.UpdateParams = this.UpdateParams.bind(this);
   }
   Vote(request: VoteRequest): Promise<VoteResponse> {
     const data = VoteRequest.encode(request).finish();
     const promise = this.rpc.request("axelar.vote.v1beta1.MsgService", "Vote", data);
     return promise.then((data) => VoteResponse.decode(new _m0.Reader(data)));
+  }
+
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse> {
+    const data = UpdateParamsRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.vote.v1beta1.MsgService", "UpdateParams", data);
+    return promise.then((data) => UpdateParamsResponse.decode(new _m0.Reader(data)));
   }
 }
 

@@ -14,6 +14,7 @@ export interface ConsensusParams {
   evidence?: EvidenceParams;
   validator?: ValidatorParams;
   version?: VersionParams;
+  abci?: ABCIParams;
 }
 
 /** BlockParams contains limits on the block size. */
@@ -28,13 +29,6 @@ export interface BlockParams {
    * Note: must be greater or equal to -1
    */
   maxGas: Long;
-  /**
-   * Minimum time increment between consecutive blocks (in milliseconds) If the
-   * block header timestamp is ahead of the system clock, decrease this value.
-   *
-   * Not exposed to the application.
-   */
-  timeIotaMs: Long;
 }
 
 /** EvidenceParams determine how we handle evidence of malfeasance. */
@@ -72,7 +66,7 @@ export interface ValidatorParams {
 
 /** VersionParams contains the ABCI application version. */
 export interface VersionParams {
-  appVersion: Long;
+  app: Long;
 }
 
 /**
@@ -85,8 +79,24 @@ export interface HashedParams {
   blockMaxGas: Long;
 }
 
+/** ABCIParams configure functionality specific to the Application Blockchain Interface. */
+export interface ABCIParams {
+  /**
+   * vote_extensions_enable_height configures the first height during which
+   * vote extensions will be enabled. During this specified height, and for all
+   * subsequent heights, precommit messages that do not contain valid extension data
+   * will be considered invalid. Prior to this height, vote extensions will not
+   * be used or accepted by validators on the network.
+   *
+   * Once enabled, vote extensions will be created by the application in ExtendVote,
+   * passed to the application for validation in VerifyVoteExtension and given
+   * to the application to use when proposing a block during PrepareProposal.
+   */
+  voteExtensionsEnableHeight: Long;
+}
+
 function createBaseConsensusParams(): ConsensusParams {
-  return { block: undefined, evidence: undefined, validator: undefined, version: undefined };
+  return { block: undefined, evidence: undefined, validator: undefined, version: undefined, abci: undefined };
 }
 
 export const ConsensusParams = {
@@ -102,6 +112,9 @@ export const ConsensusParams = {
     }
     if (message.version !== undefined) {
       VersionParams.encode(message.version, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.abci !== undefined) {
+      ABCIParams.encode(message.abci, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -125,6 +138,9 @@ export const ConsensusParams = {
         case 4:
           message.version = VersionParams.decode(reader, reader.uint32());
           break;
+        case 5:
+          message.abci = ABCIParams.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -139,6 +155,7 @@ export const ConsensusParams = {
       evidence: isSet(object.evidence) ? EvidenceParams.fromJSON(object.evidence) : undefined,
       validator: isSet(object.validator) ? ValidatorParams.fromJSON(object.validator) : undefined,
       version: isSet(object.version) ? VersionParams.fromJSON(object.version) : undefined,
+      abci: isSet(object.abci) ? ABCIParams.fromJSON(object.abci) : undefined,
     };
   },
 
@@ -152,6 +169,7 @@ export const ConsensusParams = {
       (obj.validator = message.validator ? ValidatorParams.toJSON(message.validator) : undefined);
     message.version !== undefined &&
       (obj.version = message.version ? VersionParams.toJSON(message.version) : undefined);
+    message.abci !== undefined && (obj.abci = message.abci ? ABCIParams.toJSON(message.abci) : undefined);
     return obj;
   },
 
@@ -171,12 +189,14 @@ export const ConsensusParams = {
       object.version !== undefined && object.version !== null
         ? VersionParams.fromPartial(object.version)
         : undefined;
+    message.abci =
+      object.abci !== undefined && object.abci !== null ? ABCIParams.fromPartial(object.abci) : undefined;
     return message;
   },
 };
 
 function createBaseBlockParams(): BlockParams {
-  return { maxBytes: Long.ZERO, maxGas: Long.ZERO, timeIotaMs: Long.ZERO };
+  return { maxBytes: Long.ZERO, maxGas: Long.ZERO };
 }
 
 export const BlockParams = {
@@ -186,9 +206,6 @@ export const BlockParams = {
     }
     if (!message.maxGas.isZero()) {
       writer.uint32(16).int64(message.maxGas);
-    }
-    if (!message.timeIotaMs.isZero()) {
-      writer.uint32(24).int64(message.timeIotaMs);
     }
     return writer;
   },
@@ -206,9 +223,6 @@ export const BlockParams = {
         case 2:
           message.maxGas = reader.int64() as Long;
           break;
-        case 3:
-          message.timeIotaMs = reader.int64() as Long;
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -221,7 +235,6 @@ export const BlockParams = {
     return {
       maxBytes: isSet(object.maxBytes) ? Long.fromValue(object.maxBytes) : Long.ZERO,
       maxGas: isSet(object.maxGas) ? Long.fromValue(object.maxGas) : Long.ZERO,
-      timeIotaMs: isSet(object.timeIotaMs) ? Long.fromValue(object.timeIotaMs) : Long.ZERO,
     };
   },
 
@@ -229,7 +242,6 @@ export const BlockParams = {
     const obj: any = {};
     message.maxBytes !== undefined && (obj.maxBytes = (message.maxBytes || Long.ZERO).toString());
     message.maxGas !== undefined && (obj.maxGas = (message.maxGas || Long.ZERO).toString());
-    message.timeIotaMs !== undefined && (obj.timeIotaMs = (message.timeIotaMs || Long.ZERO).toString());
     return obj;
   },
 
@@ -239,10 +251,6 @@ export const BlockParams = {
       object.maxBytes !== undefined && object.maxBytes !== null ? Long.fromValue(object.maxBytes) : Long.ZERO;
     message.maxGas =
       object.maxGas !== undefined && object.maxGas !== null ? Long.fromValue(object.maxGas) : Long.ZERO;
-    message.timeIotaMs =
-      object.timeIotaMs !== undefined && object.timeIotaMs !== null
-        ? Long.fromValue(object.timeIotaMs)
-        : Long.ZERO;
     return message;
   },
 };
@@ -377,13 +385,13 @@ export const ValidatorParams = {
 };
 
 function createBaseVersionParams(): VersionParams {
-  return { appVersion: Long.UZERO };
+  return { app: Long.UZERO };
 }
 
 export const VersionParams = {
   encode(message: VersionParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.appVersion.isZero()) {
-      writer.uint32(8).uint64(message.appVersion);
+    if (!message.app.isZero()) {
+      writer.uint32(8).uint64(message.app);
     }
     return writer;
   },
@@ -396,7 +404,7 @@ export const VersionParams = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.appVersion = reader.uint64() as Long;
+          message.app = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -408,22 +416,19 @@ export const VersionParams = {
 
   fromJSON(object: any): VersionParams {
     return {
-      appVersion: isSet(object.appVersion) ? Long.fromValue(object.appVersion) : Long.UZERO,
+      app: isSet(object.app) ? Long.fromValue(object.app) : Long.UZERO,
     };
   },
 
   toJSON(message: VersionParams): unknown {
     const obj: any = {};
-    message.appVersion !== undefined && (obj.appVersion = (message.appVersion || Long.UZERO).toString());
+    message.app !== undefined && (obj.app = (message.app || Long.UZERO).toString());
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<VersionParams>, I>>(object: I): VersionParams {
     const message = createBaseVersionParams();
-    message.appVersion =
-      object.appVersion !== undefined && object.appVersion !== null
-        ? Long.fromValue(object.appVersion)
-        : Long.UZERO;
+    message.app = object.app !== undefined && object.app !== null ? Long.fromValue(object.app) : Long.UZERO;
     return message;
   },
 };
@@ -488,6 +493,61 @@ export const HashedParams = {
     message.blockMaxGas =
       object.blockMaxGas !== undefined && object.blockMaxGas !== null
         ? Long.fromValue(object.blockMaxGas)
+        : Long.ZERO;
+    return message;
+  },
+};
+
+function createBaseABCIParams(): ABCIParams {
+  return { voteExtensionsEnableHeight: Long.ZERO };
+}
+
+export const ABCIParams = {
+  encode(message: ABCIParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.voteExtensionsEnableHeight.isZero()) {
+      writer.uint32(8).int64(message.voteExtensionsEnableHeight);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ABCIParams {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseABCIParams();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.voteExtensionsEnableHeight = reader.int64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ABCIParams {
+    return {
+      voteExtensionsEnableHeight: isSet(object.voteExtensionsEnableHeight)
+        ? Long.fromValue(object.voteExtensionsEnableHeight)
+        : Long.ZERO,
+    };
+  },
+
+  toJSON(message: ABCIParams): unknown {
+    const obj: any = {};
+    message.voteExtensionsEnableHeight !== undefined &&
+      (obj.voteExtensionsEnableHeight = (message.voteExtensionsEnableHeight || Long.ZERO).toString());
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ABCIParams>, I>>(object: I): ABCIParams {
+    const message = createBaseABCIParams();
+    message.voteExtensionsEnableHeight =
+      object.voteExtensionsEnableHeight !== undefined && object.voteExtensionsEnableHeight !== null
+        ? Long.fromValue(object.voteExtensionsEnableHeight)
         : Long.ZERO;
     return message;
   },

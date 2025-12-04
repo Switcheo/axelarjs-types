@@ -8,12 +8,14 @@ import {
   RotateKeyResponse,
   KeygenOptOutResponse,
   KeygenOptInResponse,
+  UpdateParamsResponse,
   StartKeygenRequest,
   SubmitPubKeyRequest,
   SubmitSignatureRequest,
   RotateKeyRequest,
   KeygenOptOutRequest,
   KeygenOptInRequest,
+  UpdateParamsRequest,
 } from "../../../axelar/multisig/v1beta1/tx";
 import {
   KeyIDResponse,
@@ -38,6 +40,7 @@ export interface MsgService {
   RotateKey(request: RotateKeyRequest): Promise<RotateKeyResponse>;
   KeygenOptOut(request: KeygenOptOutRequest): Promise<KeygenOptOutResponse>;
   KeygenOptIn(request: KeygenOptInRequest): Promise<KeygenOptInResponse>;
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse>;
 }
 
 export class MsgServiceClientImpl implements MsgService {
@@ -50,6 +53,7 @@ export class MsgServiceClientImpl implements MsgService {
     this.RotateKey = this.RotateKey.bind(this);
     this.KeygenOptOut = this.KeygenOptOut.bind(this);
     this.KeygenOptIn = this.KeygenOptIn.bind(this);
+    this.UpdateParams = this.UpdateParams.bind(this);
   }
   StartKeygen(request: StartKeygenRequest): Promise<StartKeygenResponse> {
     const data = StartKeygenRequest.encode(request).finish();
@@ -85,6 +89,12 @@ export class MsgServiceClientImpl implements MsgService {
     const data = KeygenOptInRequest.encode(request).finish();
     const promise = this.rpc.request("axelar.multisig.v1beta1.MsgService", "KeygenOptIn", data);
     return promise.then((data) => KeygenOptInResponse.decode(new _m0.Reader(data)));
+  }
+
+  UpdateParams(request: UpdateParamsRequest): Promise<UpdateParamsResponse> {
+    const data = UpdateParamsRequest.encode(request).finish();
+    const promise = this.rpc.request("axelar.multisig.v1beta1.MsgService", "UpdateParams", data);
+    return promise.then((data) => UpdateParamsResponse.decode(new _m0.Reader(data)));
   }
 }
 

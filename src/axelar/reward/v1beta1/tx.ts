@@ -2,12 +2,21 @@
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
 import { Any } from "../../../google/protobuf/any";
+import { Params } from "../../../axelar/reward/v1beta1/params";
 
 export const protobufPackage = "axelar.reward.v1beta1";
 
 export interface RefundMsgRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
   innerMessage?: Any;
+  sender: string;
 }
 
 export interface RefundMsgResponse {
@@ -15,17 +24,27 @@ export interface RefundMsgResponse {
   log: string;
 }
 
+export interface UpdateParamsRequest {
+  authority: string;
+  params?: Params;
+}
+
+export interface UpdateParamsResponse {}
+
 function createBaseRefundMsgRequest(): RefundMsgRequest {
-  return { sender: new Uint8Array(), innerMessage: undefined };
+  return { senderDeprecated: new Uint8Array(), innerMessage: undefined, sender: "" };
 }
 
 export const RefundMsgRequest = {
   encode(message: RefundMsgRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
     }
     if (message.innerMessage !== undefined) {
       Any.encode(message.innerMessage, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.sender !== "") {
+      writer.uint32(26).string(message.sender);
     }
     return writer;
   },
@@ -38,10 +57,13 @@ export const RefundMsgRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
           break;
         case 2:
           message.innerMessage = Any.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -53,27 +75,34 @@ export const RefundMsgRequest = {
 
   fromJSON(object: any): RefundMsgRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
       innerMessage: isSet(object.innerMessage) ? Any.fromJSON(object.innerMessage) : undefined,
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: RefundMsgRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
     message.innerMessage !== undefined &&
       (obj.innerMessage = message.innerMessage ? Any.toJSON(message.innerMessage) : undefined);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<RefundMsgRequest>, I>>(object: I): RefundMsgRequest {
     const message = createBaseRefundMsgRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
     message.innerMessage =
       object.innerMessage !== undefined && object.innerMessage !== null
         ? Any.fromPartial(object.innerMessage)
         : undefined;
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -133,6 +162,104 @@ export const RefundMsgResponse = {
     const message = createBaseRefundMsgResponse();
     message.data = object.data ?? new Uint8Array();
     message.log = object.log ?? "";
+    return message;
+  },
+};
+
+function createBaseUpdateParamsRequest(): UpdateParamsRequest {
+  return { authority: "", params: undefined };
+}
+
+export const UpdateParamsRequest = {
+  encode(message: UpdateParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.params !== undefined) {
+      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        case 2:
+          message.params = Params.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateParamsRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
+  },
+
+  toJSON(message: UpdateParamsRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsRequest>, I>>(object: I): UpdateParamsRequest {
+    const message = createBaseUpdateParamsRequest();
+    message.authority = object.authority ?? "";
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateParamsResponse(): UpdateParamsResponse {
+  return {};
+}
+
+export const UpdateParamsResponse = {
+  encode(_: UpdateParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): UpdateParamsResponse {
+    return {};
+  },
+
+  toJSON(_: UpdateParamsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsResponse>, I>>(_: I): UpdateParamsResponse {
+    const message = createBaseUpdateParamsResponse();
     return message;
   },
 };

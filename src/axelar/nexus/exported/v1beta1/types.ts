@@ -99,6 +99,14 @@ export function transferDirectionToJSON(object: TransferDirection): string {
 /** Chain represents the properties of a registered blockchain */
 export interface Chain {
   name: string;
+  /**
+   * DEPRECATED: Removed in v0.14, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  nativeAssetDeprecated: string;
   supportsForeignAssets: boolean;
   keyType: KeyType;
   module: string;
@@ -136,6 +144,14 @@ export interface FeeInfo {
 
 export interface Asset {
   denom: string;
+  /**
+   * DEPRECATED: Removed in v0.15, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  minAmountDeprecated: Uint8Array;
   isNativeAsset: boolean;
 }
 
@@ -214,13 +230,16 @@ export interface WasmMessage {
 }
 
 function createBaseChain(): Chain {
-  return { name: "", supportsForeignAssets: false, keyType: 0, module: "" };
+  return { name: "", nativeAssetDeprecated: "", supportsForeignAssets: false, keyType: 0, module: "" };
 }
 
 export const Chain = {
   encode(message: Chain, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
+    }
+    if (message.nativeAssetDeprecated !== "") {
+      writer.uint32(18).string(message.nativeAssetDeprecated);
     }
     if (message.supportsForeignAssets === true) {
       writer.uint32(24).bool(message.supportsForeignAssets);
@@ -244,6 +263,9 @@ export const Chain = {
         case 1:
           message.name = reader.string();
           break;
+        case 2:
+          message.nativeAssetDeprecated = reader.string();
+          break;
         case 3:
           message.supportsForeignAssets = reader.bool();
           break;
@@ -264,6 +286,7 @@ export const Chain = {
   fromJSON(object: any): Chain {
     return {
       name: isSet(object.name) ? String(object.name) : "",
+      nativeAssetDeprecated: isSet(object.nativeAssetDeprecated) ? String(object.nativeAssetDeprecated) : "",
       supportsForeignAssets: isSet(object.supportsForeignAssets)
         ? Boolean(object.supportsForeignAssets)
         : false,
@@ -275,6 +298,8 @@ export const Chain = {
   toJSON(message: Chain): unknown {
     const obj: any = {};
     message.name !== undefined && (obj.name = message.name);
+    message.nativeAssetDeprecated !== undefined &&
+      (obj.nativeAssetDeprecated = message.nativeAssetDeprecated);
     message.supportsForeignAssets !== undefined &&
       (obj.supportsForeignAssets = message.supportsForeignAssets);
     message.keyType !== undefined && (obj.keyType = keyTypeToJSON(message.keyType));
@@ -285,6 +310,7 @@ export const Chain = {
   fromPartial<I extends Exact<DeepPartial<Chain>, I>>(object: I): Chain {
     const message = createBaseChain();
     message.name = object.name ?? "";
+    message.nativeAssetDeprecated = object.nativeAssetDeprecated ?? "";
     message.supportsForeignAssets = object.supportsForeignAssets ?? false;
     message.keyType = object.keyType ?? 0;
     message.module = object.module ?? "";
@@ -580,13 +606,16 @@ export const FeeInfo = {
 };
 
 function createBaseAsset(): Asset {
-  return { denom: "", isNativeAsset: false };
+  return { denom: "", minAmountDeprecated: new Uint8Array(), isNativeAsset: false };
 }
 
 export const Asset = {
   encode(message: Asset, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.denom !== "") {
       writer.uint32(10).string(message.denom);
+    }
+    if (message.minAmountDeprecated.length !== 0) {
+      writer.uint32(18).bytes(message.minAmountDeprecated);
     }
     if (message.isNativeAsset === true) {
       writer.uint32(24).bool(message.isNativeAsset);
@@ -604,6 +633,9 @@ export const Asset = {
         case 1:
           message.denom = reader.string();
           break;
+        case 2:
+          message.minAmountDeprecated = reader.bytes();
+          break;
         case 3:
           message.isNativeAsset = reader.bool();
           break;
@@ -618,6 +650,9 @@ export const Asset = {
   fromJSON(object: any): Asset {
     return {
       denom: isSet(object.denom) ? String(object.denom) : "",
+      minAmountDeprecated: isSet(object.minAmountDeprecated)
+        ? bytesFromBase64(object.minAmountDeprecated)
+        : new Uint8Array(),
       isNativeAsset: isSet(object.isNativeAsset) ? Boolean(object.isNativeAsset) : false,
     };
   },
@@ -625,6 +660,10 @@ export const Asset = {
   toJSON(message: Asset): unknown {
     const obj: any = {};
     message.denom !== undefined && (obj.denom = message.denom);
+    message.minAmountDeprecated !== undefined &&
+      (obj.minAmountDeprecated = base64FromBytes(
+        message.minAmountDeprecated !== undefined ? message.minAmountDeprecated : new Uint8Array(),
+      ));
     message.isNativeAsset !== undefined && (obj.isNativeAsset = message.isNativeAsset);
     return obj;
   },
@@ -632,6 +671,7 @@ export const Asset = {
   fromPartial<I extends Exact<DeepPartial<Asset>, I>>(object: I): Asset {
     const message = createBaseAsset();
     message.denom = object.denom ?? "";
+    message.minAmountDeprecated = object.minAmountDeprecated ?? new Uint8Array();
     message.isNativeAsset = object.isNativeAsset ?? false;
     return message;
   },

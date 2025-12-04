@@ -1,34 +1,83 @@
 /* eslint-disable */
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
+import { PollKey, Vote } from "../../../axelar/vote/exported/v1beta1/types";
 import { Any } from "../../../google/protobuf/any";
+import { Params } from "../../../axelar/vote/v1beta1/params";
 
 export const protobufPackage = "axelar.vote.v1beta1";
 
 export interface VoteRequest {
-  sender: Uint8Array;
+  /**
+   * DEPRECATED: This field is deprecated but must remain to ensure backward
+   * compatibility. Removing this field would break decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  senderDeprecated: Uint8Array;
+  /**
+   * DEPRECATED: Removed in v0.21, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  pollKey?: PollKey;
+  /**
+   * DEPRECATED: Removed in v0.21, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  voteDeprecated?: Vote;
   pollId: Long;
   vote?: Any;
+  sender: string;
 }
 
 export interface VoteResponse {
   log: string;
 }
 
+export interface UpdateParamsRequest {
+  authority: string;
+  params?: Params;
+}
+
+export interface UpdateParamsResponse {}
+
 function createBaseVoteRequest(): VoteRequest {
-  return { sender: new Uint8Array(), pollId: Long.UZERO, vote: undefined };
+  return {
+    senderDeprecated: new Uint8Array(),
+    pollKey: undefined,
+    voteDeprecated: undefined,
+    pollId: Long.UZERO,
+    vote: undefined,
+    sender: "",
+  };
 }
 
 export const VoteRequest = {
   encode(message: VoteRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sender.length !== 0) {
-      writer.uint32(10).bytes(message.sender);
+    if (message.senderDeprecated.length !== 0) {
+      writer.uint32(10).bytes(message.senderDeprecated);
+    }
+    if (message.pollKey !== undefined) {
+      PollKey.encode(message.pollKey, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.voteDeprecated !== undefined) {
+      Vote.encode(message.voteDeprecated, writer.uint32(26).fork()).ldelim();
     }
     if (!message.pollId.isZero()) {
       writer.uint32(32).uint64(message.pollId);
     }
     if (message.vote !== undefined) {
       Any.encode(message.vote, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.sender !== "") {
+      writer.uint32(50).string(message.sender);
     }
     return writer;
   },
@@ -41,13 +90,22 @@ export const VoteRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sender = reader.bytes();
+          message.senderDeprecated = reader.bytes();
+          break;
+        case 2:
+          message.pollKey = PollKey.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.voteDeprecated = Vote.decode(reader, reader.uint32());
           break;
         case 4:
           message.pollId = reader.uint64() as Long;
           break;
         case 5:
           message.vote = Any.decode(reader, reader.uint32());
+          break;
+        case 6:
+          message.sender = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -59,28 +117,49 @@ export const VoteRequest = {
 
   fromJSON(object: any): VoteRequest {
     return {
-      sender: isSet(object.sender) ? bytesFromBase64(object.sender) : new Uint8Array(),
+      senderDeprecated: isSet(object.senderDeprecated)
+        ? bytesFromBase64(object.senderDeprecated)
+        : new Uint8Array(),
+      pollKey: isSet(object.pollKey) ? PollKey.fromJSON(object.pollKey) : undefined,
+      voteDeprecated: isSet(object.voteDeprecated) ? Vote.fromJSON(object.voteDeprecated) : undefined,
       pollId: isSet(object.pollId) ? Long.fromValue(object.pollId) : Long.UZERO,
       vote: isSet(object.vote) ? Any.fromJSON(object.vote) : undefined,
+      sender: isSet(object.sender) ? String(object.sender) : "",
     };
   },
 
   toJSON(message: VoteRequest): unknown {
     const obj: any = {};
-    message.sender !== undefined &&
-      (obj.sender = base64FromBytes(message.sender !== undefined ? message.sender : new Uint8Array()));
+    message.senderDeprecated !== undefined &&
+      (obj.senderDeprecated = base64FromBytes(
+        message.senderDeprecated !== undefined ? message.senderDeprecated : new Uint8Array(),
+      ));
+    message.pollKey !== undefined &&
+      (obj.pollKey = message.pollKey ? PollKey.toJSON(message.pollKey) : undefined);
+    message.voteDeprecated !== undefined &&
+      (obj.voteDeprecated = message.voteDeprecated ? Vote.toJSON(message.voteDeprecated) : undefined);
     message.pollId !== undefined && (obj.pollId = (message.pollId || Long.UZERO).toString());
     message.vote !== undefined && (obj.vote = message.vote ? Any.toJSON(message.vote) : undefined);
+    message.sender !== undefined && (obj.sender = message.sender);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<VoteRequest>, I>>(object: I): VoteRequest {
     const message = createBaseVoteRequest();
-    message.sender = object.sender ?? new Uint8Array();
+    message.senderDeprecated = object.senderDeprecated ?? new Uint8Array();
+    message.pollKey =
+      object.pollKey !== undefined && object.pollKey !== null
+        ? PollKey.fromPartial(object.pollKey)
+        : undefined;
+    message.voteDeprecated =
+      object.voteDeprecated !== undefined && object.voteDeprecated !== null
+        ? Vote.fromPartial(object.voteDeprecated)
+        : undefined;
     message.pollId =
       object.pollId !== undefined && object.pollId !== null ? Long.fromValue(object.pollId) : Long.UZERO;
     message.vote =
       object.vote !== undefined && object.vote !== null ? Any.fromPartial(object.vote) : undefined;
+    message.sender = object.sender ?? "";
     return message;
   },
 };
@@ -130,6 +209,104 @@ export const VoteResponse = {
   fromPartial<I extends Exact<DeepPartial<VoteResponse>, I>>(object: I): VoteResponse {
     const message = createBaseVoteResponse();
     message.log = object.log ?? "";
+    return message;
+  },
+};
+
+function createBaseUpdateParamsRequest(): UpdateParamsRequest {
+  return { authority: "", params: undefined };
+}
+
+export const UpdateParamsRequest = {
+  encode(message: UpdateParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.params !== undefined) {
+      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.authority = reader.string();
+          break;
+        case 2:
+          message.params = Params.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateParamsRequest {
+    return {
+      authority: isSet(object.authority) ? String(object.authority) : "",
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
+  },
+
+  toJSON(message: UpdateParamsRequest): unknown {
+    const obj: any = {};
+    message.authority !== undefined && (obj.authority = message.authority);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsRequest>, I>>(object: I): UpdateParamsRequest {
+    const message = createBaseUpdateParamsRequest();
+    message.authority = object.authority ?? "";
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    return message;
+  },
+};
+
+function createBaseUpdateParamsResponse(): UpdateParamsResponse {
+  return {};
+}
+
+export const UpdateParamsResponse = {
+  encode(_: UpdateParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UpdateParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): UpdateParamsResponse {
+    return {};
+  },
+
+  toJSON(_: UpdateParamsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<UpdateParamsResponse>, I>>(_: I): UpdateParamsResponse {
+    const message = createBaseUpdateParamsResponse();
     return message;
   },
 };

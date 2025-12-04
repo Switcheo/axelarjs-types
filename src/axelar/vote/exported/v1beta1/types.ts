@@ -81,6 +81,23 @@ export interface PollKey {
   id: string;
 }
 
+/**
+ * Vote represents a vote result - kept for backward compatibility
+ *
+ * @deprecated
+ */
+export interface Vote {
+  /**
+   * DEPRECATED: Removed in v0.18, reinstated in v1.3 for backward
+   * compatibility. This field must remain to allow decoding of historical
+   * transactions. DO NOT use in new code.
+   *
+   * @deprecated
+   */
+  resultsDeprecated: Any[];
+  result?: Any;
+}
+
 /** PollParticipants should be embedded in poll events in other modules */
 export interface PollParticipants {
   pollId: Long;
@@ -328,6 +345,71 @@ export const PollKey = {
     const message = createBasePollKey();
     message.module = object.module ?? "";
     message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseVote(): Vote {
+  return { resultsDeprecated: [], result: undefined };
+}
+
+export const Vote = {
+  encode(message: Vote, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.resultsDeprecated) {
+      Any.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.result !== undefined) {
+      Any.encode(message.result, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Vote {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseVote();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.resultsDeprecated.push(Any.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.result = Any.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Vote {
+    return {
+      resultsDeprecated: Array.isArray(object?.resultsDeprecated)
+        ? object.resultsDeprecated.map((e: any) => Any.fromJSON(e))
+        : [],
+      result: isSet(object.result) ? Any.fromJSON(object.result) : undefined,
+    };
+  },
+
+  toJSON(message: Vote): unknown {
+    const obj: any = {};
+    if (message.resultsDeprecated) {
+      obj.resultsDeprecated = message.resultsDeprecated.map((e) => (e ? Any.toJSON(e) : undefined));
+    } else {
+      obj.resultsDeprecated = [];
+    }
+    message.result !== undefined && (obj.result = message.result ? Any.toJSON(message.result) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<Vote>, I>>(object: I): Vote {
+    const message = createBaseVote();
+    message.resultsDeprecated = object.resultsDeprecated?.map((e) => Any.fromPartial(e)) || [];
+    message.result =
+      object.result !== undefined && object.result !== null ? Any.fromPartial(object.result) : undefined;
     return message;
   },
 };

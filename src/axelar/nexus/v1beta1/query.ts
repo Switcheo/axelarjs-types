@@ -227,6 +227,16 @@ export interface ParamsResponse {
   params?: Params;
 }
 
+/**
+ * LinkDepositEnabledRequest represents a message that queries whether the
+ * link-deposit protocol is enabled
+ */
+export interface LinkDepositEnabledRequest {}
+
+export interface LinkDepositEnabledResponse {
+  enabled: boolean;
+}
+
 function createBaseChainMaintainersRequest(): ChainMaintainersRequest {
   return { chain: "" };
 }
@@ -1776,6 +1786,96 @@ export const ParamsResponse = {
     const message = createBaseParamsResponse();
     message.params =
       object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    return message;
+  },
+};
+
+function createBaseLinkDepositEnabledRequest(): LinkDepositEnabledRequest {
+  return {};
+}
+
+export const LinkDepositEnabledRequest = {
+  encode(_: LinkDepositEnabledRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): LinkDepositEnabledRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLinkDepositEnabledRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): LinkDepositEnabledRequest {
+    return {};
+  },
+
+  toJSON(_: LinkDepositEnabledRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<LinkDepositEnabledRequest>, I>>(_: I): LinkDepositEnabledRequest {
+    const message = createBaseLinkDepositEnabledRequest();
+    return message;
+  },
+};
+
+function createBaseLinkDepositEnabledResponse(): LinkDepositEnabledResponse {
+  return { enabled: false };
+}
+
+export const LinkDepositEnabledResponse = {
+  encode(message: LinkDepositEnabledResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.enabled === true) {
+      writer.uint32(8).bool(message.enabled);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): LinkDepositEnabledResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLinkDepositEnabledResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.enabled = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LinkDepositEnabledResponse {
+    return {
+      enabled: isSet(object.enabled) ? Boolean(object.enabled) : false,
+    };
+  },
+
+  toJSON(message: LinkDepositEnabledResponse): unknown {
+    const obj: any = {};
+    message.enabled !== undefined && (obj.enabled = message.enabled);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<LinkDepositEnabledResponse>, I>>(
+    object: I,
+  ): LinkDepositEnabledResponse {
+    const message = createBaseLinkDepositEnabledResponse();
+    message.enabled = object.enabled ?? false;
     return message;
   },
 };

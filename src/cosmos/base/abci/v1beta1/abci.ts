@@ -3,6 +3,7 @@ import Long from "long";
 import * as _m0 from "protobufjs/minimal";
 import { Any } from "../../../../google/protobuf/any";
 import { Event } from "../../../../tendermint/abci/types";
+import { Block } from "../../../../tendermint/types/block";
 
 export const protobufPackage = "cosmos.base.abci.v1beta1";
 
@@ -45,7 +46,7 @@ export interface TxResponse {
   /**
    * Events defines all the events emitted by processing a transaction. Note,
    * these events include those emitted by processing all the messages and those
-   * emitted from the ante handler. Whereas Logs contains the events, with
+   * emitted from the ante. Whereas Logs contains the events, with
    * additional metadata, emitted only by processing the messages.
    *
    * Since: cosmos-sdk 0.42.11, 0.44.5, 0.45
@@ -95,6 +96,10 @@ export interface Result {
   /**
    * Data is any data returned from message or handler execution. It MUST be
    * length prefixed in order to separate data from multiple message executions.
+   * Deprecated. This field is still populated, but prefer msg_response instead
+   * because it also contains the Msg response typeURL.
+   *
+   * @deprecated
    */
   data: Uint8Array;
   /** Log contains the log information from message or handler execution. */
@@ -104,6 +109,12 @@ export interface Result {
    * or handler execution.
    */
   events: Event[];
+  /**
+   * msg_responses contains the Msg handler responses type packed in Anys.
+   *
+   * Since: cosmos-sdk 0.46
+   */
+  msgResponses: Any[];
 }
 
 /**
@@ -118,6 +129,8 @@ export interface SimulationResponse {
 /**
  * MsgData defines the data returned in a Result object during message
  * execution.
+ *
+ * @deprecated
  */
 export interface MsgData {
   msgType: string;
@@ -129,7 +142,18 @@ export interface MsgData {
  * for each message.
  */
 export interface TxMsgData {
+  /**
+   * data field is deprecated and not populated.
+   *
+   * @deprecated
+   */
   data: MsgData[];
+  /**
+   * msg_responses contains the Msg handler responses packed into Anys.
+   *
+   * Since: cosmos-sdk 0.46
+   */
+  msgResponses: Any[];
 }
 
 /** SearchTxsResult defines a structure for querying txs pageable */
@@ -146,6 +170,22 @@ export interface SearchTxsResult {
   limit: Long;
   /** List of txs in current page */
   txs: TxResponse[];
+}
+
+/** SearchBlocksResult defines a structure for querying blocks pageable */
+export interface SearchBlocksResult {
+  /** Count of all blocks */
+  totalCount: Long;
+  /** Count of blocks in current page */
+  count: Long;
+  /** Index of current page, start from 1 */
+  pageNumber: Long;
+  /** Count of total pages */
+  pageTotal: Long;
+  /** Max count blocks per page */
+  limit: Long;
+  /** List of blocks in current page */
+  blocks: Block[];
 }
 
 function createBaseTxResponse(): TxResponse {
@@ -588,7 +628,7 @@ export const GasInfo = {
 };
 
 function createBaseResult(): Result {
-  return { data: new Uint8Array(), log: "", events: [] };
+  return { data: new Uint8Array(), log: "", events: [], msgResponses: [] };
 }
 
 export const Result = {
@@ -601,6 +641,9 @@ export const Result = {
     }
     for (const v of message.events) {
       Event.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
+    for (const v of message.msgResponses) {
+      Any.encode(v!, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -621,6 +664,9 @@ export const Result = {
         case 3:
           message.events.push(Event.decode(reader, reader.uint32()));
           break;
+        case 4:
+          message.msgResponses.push(Any.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -634,6 +680,9 @@ export const Result = {
       data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(),
       log: isSet(object.log) ? String(object.log) : "",
       events: Array.isArray(object?.events) ? object.events.map((e: any) => Event.fromJSON(e)) : [],
+      msgResponses: Array.isArray(object?.msgResponses)
+        ? object.msgResponses.map((e: any) => Any.fromJSON(e))
+        : [],
     };
   },
 
@@ -647,6 +696,11 @@ export const Result = {
     } else {
       obj.events = [];
     }
+    if (message.msgResponses) {
+      obj.msgResponses = message.msgResponses.map((e) => (e ? Any.toJSON(e) : undefined));
+    } else {
+      obj.msgResponses = [];
+    }
     return obj;
   },
 
@@ -655,6 +709,7 @@ export const Result = {
     message.data = object.data ?? new Uint8Array();
     message.log = object.log ?? "";
     message.events = object.events?.map((e) => Event.fromPartial(e)) || [];
+    message.msgResponses = object.msgResponses?.map((e) => Any.fromPartial(e)) || [];
     return message;
   },
 };
@@ -782,13 +837,16 @@ export const MsgData = {
 };
 
 function createBaseTxMsgData(): TxMsgData {
-  return { data: [] };
+  return { data: [], msgResponses: [] };
 }
 
 export const TxMsgData = {
   encode(message: TxMsgData, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.data) {
       MsgData.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    for (const v of message.msgResponses) {
+      Any.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -803,6 +861,9 @@ export const TxMsgData = {
         case 1:
           message.data.push(MsgData.decode(reader, reader.uint32()));
           break;
+        case 2:
+          message.msgResponses.push(Any.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -814,6 +875,9 @@ export const TxMsgData = {
   fromJSON(object: any): TxMsgData {
     return {
       data: Array.isArray(object?.data) ? object.data.map((e: any) => MsgData.fromJSON(e)) : [],
+      msgResponses: Array.isArray(object?.msgResponses)
+        ? object.msgResponses.map((e: any) => Any.fromJSON(e))
+        : [],
     };
   },
 
@@ -824,12 +888,18 @@ export const TxMsgData = {
     } else {
       obj.data = [];
     }
+    if (message.msgResponses) {
+      obj.msgResponses = message.msgResponses.map((e) => (e ? Any.toJSON(e) : undefined));
+    } else {
+      obj.msgResponses = [];
+    }
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<TxMsgData>, I>>(object: I): TxMsgData {
     const message = createBaseTxMsgData();
     message.data = object.data?.map((e) => MsgData.fromPartial(e)) || [];
+    message.msgResponses = object.msgResponses?.map((e) => Any.fromPartial(e)) || [];
     return message;
   },
 };
@@ -946,6 +1016,122 @@ export const SearchTxsResult = {
     message.limit =
       object.limit !== undefined && object.limit !== null ? Long.fromValue(object.limit) : Long.UZERO;
     message.txs = object.txs?.map((e) => TxResponse.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseSearchBlocksResult(): SearchBlocksResult {
+  return {
+    totalCount: Long.ZERO,
+    count: Long.ZERO,
+    pageNumber: Long.ZERO,
+    pageTotal: Long.ZERO,
+    limit: Long.ZERO,
+    blocks: [],
+  };
+}
+
+export const SearchBlocksResult = {
+  encode(message: SearchBlocksResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.totalCount.isZero()) {
+      writer.uint32(8).int64(message.totalCount);
+    }
+    if (!message.count.isZero()) {
+      writer.uint32(16).int64(message.count);
+    }
+    if (!message.pageNumber.isZero()) {
+      writer.uint32(24).int64(message.pageNumber);
+    }
+    if (!message.pageTotal.isZero()) {
+      writer.uint32(32).int64(message.pageTotal);
+    }
+    if (!message.limit.isZero()) {
+      writer.uint32(40).int64(message.limit);
+    }
+    for (const v of message.blocks) {
+      Block.encode(v!, writer.uint32(50).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SearchBlocksResult {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSearchBlocksResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.totalCount = reader.int64() as Long;
+          break;
+        case 2:
+          message.count = reader.int64() as Long;
+          break;
+        case 3:
+          message.pageNumber = reader.int64() as Long;
+          break;
+        case 4:
+          message.pageTotal = reader.int64() as Long;
+          break;
+        case 5:
+          message.limit = reader.int64() as Long;
+          break;
+        case 6:
+          message.blocks.push(Block.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SearchBlocksResult {
+    return {
+      totalCount: isSet(object.totalCount) ? Long.fromValue(object.totalCount) : Long.ZERO,
+      count: isSet(object.count) ? Long.fromValue(object.count) : Long.ZERO,
+      pageNumber: isSet(object.pageNumber) ? Long.fromValue(object.pageNumber) : Long.ZERO,
+      pageTotal: isSet(object.pageTotal) ? Long.fromValue(object.pageTotal) : Long.ZERO,
+      limit: isSet(object.limit) ? Long.fromValue(object.limit) : Long.ZERO,
+      blocks: Array.isArray(object?.blocks) ? object.blocks.map((e: any) => Block.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: SearchBlocksResult): unknown {
+    const obj: any = {};
+    message.totalCount !== undefined && (obj.totalCount = (message.totalCount || Long.ZERO).toString());
+    message.count !== undefined && (obj.count = (message.count || Long.ZERO).toString());
+    message.pageNumber !== undefined && (obj.pageNumber = (message.pageNumber || Long.ZERO).toString());
+    message.pageTotal !== undefined && (obj.pageTotal = (message.pageTotal || Long.ZERO).toString());
+    message.limit !== undefined && (obj.limit = (message.limit || Long.ZERO).toString());
+    if (message.blocks) {
+      obj.blocks = message.blocks.map((e) => (e ? Block.toJSON(e) : undefined));
+    } else {
+      obj.blocks = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<SearchBlocksResult>, I>>(object: I): SearchBlocksResult {
+    const message = createBaseSearchBlocksResult();
+    message.totalCount =
+      object.totalCount !== undefined && object.totalCount !== null
+        ? Long.fromValue(object.totalCount)
+        : Long.ZERO;
+    message.count =
+      object.count !== undefined && object.count !== null ? Long.fromValue(object.count) : Long.ZERO;
+    message.pageNumber =
+      object.pageNumber !== undefined && object.pageNumber !== null
+        ? Long.fromValue(object.pageNumber)
+        : Long.ZERO;
+    message.pageTotal =
+      object.pageTotal !== undefined && object.pageTotal !== null
+        ? Long.fromValue(object.pageTotal)
+        : Long.ZERO;
+    message.limit =
+      object.limit !== undefined && object.limit !== null ? Long.fromValue(object.limit) : Long.ZERO;
+    message.blocks = object.blocks?.map((e) => Block.fromPartial(e)) || [];
     return message;
   },
 };
